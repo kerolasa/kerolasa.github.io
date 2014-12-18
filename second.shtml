@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org" />
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+  <meta name="author" content="Sami Kerola" />
+  <meta name="classification" content="personal home page" />
+  <meta name="contact_addr" content="kerolasa@iki.fi" />
+  <meta name="copyright" content=
+  "Copyright (C)2000- Sami Kerola" />
+  <meta name="description" content="Home page secondary index" />
+  <meta name="distribution" content="global" />
+  <meta name="abstract" content="Home page secondary index" />
+  <meta name="keywords" content="sami, kerola, secondary, index" />
+  <meta name="language" content="en" />
+  <meta name="owner" content="Sami Kerola" />
+  <meta name="rating" content="general" />
+  <meta name="revisit-after" content="15" />
+  <meta name="robots" content="index, follow" />
+  <link type="text/css" rel="stylesheet" href="kerolasa.css" />
+
+  <title>Sami Kerola's second page</title>
+</head>
+
+<body>
+  <h3>Useful stuff mostly for me or my friends.</h3>
+
+  <p><a href="http://www.iki.fi/kerolasa/">My contact information</a><br /></p>
+
+  <p><a href="thaimaa.html">Thaimaan lomamatka</a><br />
+  <a href="matka2003.shtml">Autoloma it&auml;euroopassa</a><br />
+  <a href="matka2004/">Mukamatkojen oopperamatka</a><br />
+  <a href="matti.shtml">Matti Nyk&auml;nen - El&auml;m&auml; on
+  laiffia</a><br />
+  <a href="falafel.shtml">Falafel</a><br />
+  <a href="lettu.shtml">Perunalettu</a><br />
+  <a href="lp.html">Lastensuojelua ja sensuuria</a><br />
+  <a href="lasagna.shtml">Lasagna recipe</a></p>
+
+  <p><a href="differences.html">Mitigating the Obfuscation
+  Circumscribing the Three Primary Unix Shells</a><br />
+  <a href="load.shtml">What system load means</a><br />
+  <a href="filetimes.html">What are atime, ctime and
+  mtime?</a><br />
+  <a href="defunct.shtml">How to kill defunct (zombie)
+  process</a><br />
+  <a href="HOWTO-Basic-Debugging.html">Basic Debugging
+  HOWTO</a><br />
+  <a href="dotcommand.shtml">What difference dot command and
+  executable scripts has</a><br />
+  <a href="was/index.shtml">WebSphere Application Server stop /
+  start script</a><br />
+  <a href="interfacenames">Script printing interface with names for
+  solaris</a><br /><a href="number2numerum.sh">Script converting number
+  to english numeral</a><br />
+  <a href="amsterdam_pubs.html">Amsterdam beer recommendations</a><br />
+  <a href="london_pubs.html">London beer recommendations</a>
+  </p>
+
+  <p><a class="out" href="http://dhcpd-pools.sourceforge.net/">My
+  SourceForge project dhcpd-pools</a><br />
+  <a class="out" href="http://ut3.org/">UT3</a><br />
+  <a class="out" href="http://www.rajatsi.fi/">Rajatsi Ry</a></p>
+</body>
+</html>

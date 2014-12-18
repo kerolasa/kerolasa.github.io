@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <style xml:space="preserve" type="text/css">/**/ BODY {
+        background-color : #ffffff; margin : 10px; width : 520px; }
+        /**/</style>
+        <title>How can I kill a defunct process</title>
+    </head>
+    <body>
+        <p>From: Logan Shaw (logan@ptolemy-ethernet.arc.nasa.gov) 
+        <br />Subject: Re: How to Kill &lt;defunct&gt; process 
+        <br />Newsgroups: comp.unix.admin 
+        <br />Date: 1994-11-28 23:08:32 PST</p>
+        <p>In article &lt;3befd6$sf3@sparc.isl.net&gt;, Tariq Amin
+        &lt;tariq@sparc.isl.net&gt; wrote: 
+        <br />&gt; How can I kill a defunct process in solaris 2.3. I
+        tried kill -9 but it 
+        <br />&gt; does not work. Any clues?</p>
+        <p>(I know this is a FAQ, but just so not everybody has to go to
+        the trouble of answering...)</p>
+        <p>You cannot kill a defunct process. A defunct (or
+        &quot;zombie&quot;) process is a process that isn&#39;t running,
+        isn&#39;t eligible to run, and takes up no system resources.
+        It&#39;s actually a process that has exited, but its parent has
+        not called wait() in order to find out its exit status. The
+        kernel will keep the zombie process around until the parent makes
+        calls wait().</p>
+        <p>There are no adverse effects from having a defunct process
+        around, other than the fact it takes up a miniscule amount of
+        space in some kernel data structures somewhere and the fact it
+        reminds you that you have some less than ideal software
+        somewhere.</p>
+        <p>(You might use something like &#39;ps -deafl&#39; to find the
+        parent of the defunct process -- look under the PPID field. If
+        you can somehow make the parent process call wait(), or if you
+        kill it, the defunct process should go away.)</p>
+        <p>Hope that helps...</p>
+        <p>Adios, 
+        <br />Logan 
+        <br />-- 
+        <br />Logan Shaw, Unix System Administrator 
+        <br />&quot;Everything is a struggle in Unix&quot; -Dave
+        Keenan</p>
+    </body>
+</html>

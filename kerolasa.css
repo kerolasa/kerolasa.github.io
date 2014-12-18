@@ -1,0 +1,37 @@
+BODY {
+width: 640px;
+}
+A {
+background: transparent;
+text-decoration: none;
+}
+P.justtext {
+float: none;
+font-size: medium;
+margin-left: 20px;
+width: 640px;
+}
+DIV.justtext {
+float: none;
+font-size: medium;
+margin-left: 20px;
+width: 640px;
+}
+P.address {
+float: none;
+font-size: medium;
+margin-left: 45px;
+width: 640px;
+}
+TABLE {
+float: none;
+font-size: medium;
+}
+P.where {
+float: none;
+font-size: medium;
+font-weight: bold;
+}
+td.pad {
+text-indent: 5px;
+}

@@ -1,0 +1,779 @@
+<?xml version="1.0"?>
+<!-- :WIT:NoWrap: -->
+<html>
+    <head>
+        <title>HOWTO-Basic-Debugging - 8 August 2001</title>
+    </head>
+
+    <body BGCOLOR="#FFFFFF">
+<pre xml:space="preserve">
+Basic Debugging HOWTO
+Original Author: Peter Elmer &lt;Peter.Elmer@cern.ch&gt;
+Version: $Id: HOWTO-Basic-Debugging,v 1.10 2001/08/08 21:04:36 elmer Exp $
+
+This document contains notes on how to do &quot;Basic Debugging&quot; of problems 
+seen while running BaBar executables. Here &quot;Basic Debugging&quot; is defined
+as obtaining the basic information necessary to file a useful Remedy
+problem report (while not necessarily solving the problem oneself). It 
+includes short sections on debuggers, types of crashes, the use of 
+Framework Actions, hung jobs and filing a useful problem report.
+
+ ______________________________________________________________________
+
+  Table of Contents:
+
+  1. Introduction
+  2. Reporting problems
+   2.1 Where to post a problem report
+   2.2 What information is useful?
+  3. Types of crashes
+  4. Debuggers
+   4.1 core files
+   4.2 dbx (Sun)
+   4.3 ladebug (OSF)
+   4.4 gdb (Linux)
+   4.5 Sun Workshop (Sun)
+   4.6 Other misc. notes
+  5. Obtaining information from a traceback (an example)
+  6. Hung jobs
+   6.1 attaching processes in the debugger 
+   6.2 pstack on SunOS5 
+  7. Useful Framework features and tricks
+   7.1 NameAction
+   7.2 Skipping events 
+  8. Searching the release for code fragments
+  9. Hypernews
+ 10. Remedy
+ 11. Misc. Tricks
+   11.1 Putting the core file someplace besides the current directory
+   11.2 &quot;watchmalloc&quot; on Sun for finding memory management problems
+   11.3 Truss and strace
+   11.4 MALLOC_CHECK_ on Linux
+ 12. Sources of further information
+ 13. Credits
+
+ ______________________________________________________________________
+
+
+  1. Introduction
+
+  The BaBar code base consists of many millions of lines of code and 
+a large number of executables are in general use on (as I write this) 
+three different platforms. Almost all of us will at times come up 
+against various types of crashes or hangs while running executables 
+with which we are not 100% familiar. 
+
+  The purpose of this HOWTO is to explain the basic debugging techniques 
+that would be used by a relatively expert user who has a problem while 
+running an unfamiliar executable. It is hoped that after reading
+this HOWTO even users that do not feel themselves expert will find 
+that they have the basic tools in hand for putting together (a) a useful
+problem report for the expert on the problematic code and (b) figuring
+out who that expert would be or where to send the report (and perhaps
+even resolving the problem him/herself).
+
+  A large fraction of the notes in this document will apply to debugging 
+of any piece of code with which you may work, but some parts will clearly 
+be BaBar specific. The emphasis is more on debugging problems that
+come from executables themselves rather than &quot;external&quot; problems, hence
+there will be no explicit discussion of objectivity, root or infrastructure 
+problems (afs, nfs, network, etc.).
+
+
+
+  2. Reporting problems
+
+  Before diving in to any technical details as to how to pull together
+information for a problem report, this section contains information
+on what information is useful and where does one post this information.
+
+   2.1 Where to post a problem report
+  
+  In BaBar, we use Remedy to report and track problems in our code. However,
+before posting a Remedy report, it is useful (and recommended) to search
+to see if that problem has already appeared either in Remedy or in 
+Hypernews (HN). Often problem reports first appear in HN groups as people 
+try to understand if a particular problem is due to user error or the 
+code itself. Both HN and Remedy are described in a later section.
+
+  A useful strategy for proceeding when you have a problem while
+running some BaBar executable (such as a crash) is:
+
+    o Verify that..
+        - you can make the crash happen again
+        - you are running standard code, i.e., part of a babar release
+        - you are running on a correctly installed base
+        - if you have new code in the executable, you should have
+          established, with reasonable diligence, that your code is
+          not the site of the crash.
+        - you have a good build.
+
+       ...To Finish...
+
+
+
+   2.2 What information is useful?
+
+    When posting a question to HN or a bug report to Remedy it is
+    important to remember that the people reading the problem report
+    don&#39;t really know what you are doing (there are hundreds of people
+    doing many different things in many different ways in BaBar), so
+    providing a basic set of information can really simplify things.
+    The goal should be to provide enough information such that the
+    exact situation can be recognized and/or duplicated if necessary. A
+    basic set of useful information would include:
+
+     o Executable being run and tcl script
+
+     o Release and platform - What code release were using? Which 
+         platform?
+
+     o Tags checked out - Were there any additonal tags check out 
+         in the test release or did you make any modifications?
+
+     o Environment variables set - Did you have an special environment
+         variables set which would affect the running of the job? (Or
+         perhaps while the executable was being compiled/linked, for 
+         example in Beta.)
+
+     o Patch files, if any, e.g., BearPatches.tcl.
+
+     o Type of crash - See section 3 below.
+
+     o Traceback - See section 4 and 5 below.
+
+     o Input type, collection, objectivity or kanga - if relevant, if
+         you see the same result with multiple collections that is 
+         also useful information.
+
+     o event number, begin-of-job or end-of-job? - What event did the
+         crash happen in? Or did it happen as the beginning or end of job?
+
+      All of this information may not be necessary in every case, but 
+      you will likely be asked for more information from the list if
+      your problem is not recognized by the expert.
+
+
+
+  3. Types of crashes
+
+  The first thing to note is that when your program crashes, the last (or
+one of the last) lines in your log file from that job will contain
+some printout like (for example) &quot;Segmentation fault&quot;. What this tells
+you right away is what type of &quot;signal&quot; was sent to your program when
+it tried to do something that caused the crash. A general discusion
+of &quot;signals&quot; is beyond the scope of this HOWTO, but as this is the first 
+clue one usually has as to what has happened, this section describes the
+most common ones and describes the sort of things that may cause them.
+This is not intended to be exhaustive, but instead to point out that
+the &quot;signal&quot; sent already contains some useful information.
+
+  By way of introduction, in Unix, the interface between a program and
+the operating system (the kernel) is meant to mimic common hardware
+interfaces.  For example, when a piece of hardware, say a disk controller,
+needs the attention of the CPU, it can issue a special electrical signal
+called an interrupt.  The processor is diverted, as a result, from its
+thread of execution so that it can attend the disk drive.  The processor
+can mask interrupts when it is doing critical things, and there are many
+kinds of interrupts (signals) that can occur.
+
+  The interface between your program and the operating system follows
+this metaphor.  When something important happens, as detected by the
+kernel, your program will be delivered an interrupt (a signal) that
+your program may process.  There is a predetermined set of these
+signals (see below and /usr/include/sys/signal.h or a POSIX guide) and
+you may associate a piece of code to execute upon the receipt of any
+of the signals.  If you have no &quot;signal handler&quot; installed to &quot;catch&quot;
+the delivery of a signal, your program is terminated.
+
+  A number of common signals are used to indicate severe program
+faults, as described next.
+
+  Note that there is some variation in the printout seen with 
+platform and compiler. Below I include also the common abbreviations (e.g.
+&quot;SEGV&quot;). So without further ado:
+
+    o SEGV - A segmentation violation or segmentation fault typically 
+             means that something is trying to access memory that
+             it shouldn&#39;t be accessing. One common example of this is 
+             trying to access memory through a NULL pointer, for example:
+
+         sunprompt&gt; cat main.c
+         #include &lt;iostream.h&gt;
+         main()
+         {
+           int* bunk(0);
+           cout &lt;&lt; *bunk &lt;&lt; endl;
+         }
+         sunprompt&gt; CC main.c
+         sunprompt&gt; ./a.out
+         Segmentation fault (core dumped)
+
+    o ABRT  - asserts are one common source of the &quot;abort&quot; signal, for
+              example:
+
+         sunprompt&gt; cat main.c
+         #include &lt;assert.h&gt;
+         main()
+         {
+           int i=0;
+           assert(i!=0);
+         }
+         sunprompt&gt; CC main.c
+         sunprompt&gt; ./a.out
+         Assertion failed: i!=0, file main.c, line 5
+         Abort (core dumped)
+
+         Note that the actual assertion which was failed and the location
+         is also printed.
+
+    o FPE - A &quot;Floating Point Error&quot; usually indicates a numerical 
+            problem such as a division by zero or an overflow. One
+            example would be:
+
+         osfprompt&gt; cat main.c
+         main()
+         {
+           float a = 1.;
+           float b = 0.;
+           float c = a/b;
+         }
+         osfprompt&gt; g++ main.c
+         osfprompt&gt; ./a.out
+         Floating exception (core dumped)
+
+    o ILL - If you receive a signal like this (&quot;Illegal Instruction&quot;), means
+            that, while running, your program has tried to execute a
+            machine &quot;instruction&quot; which does not exist. This can happen
+            for a variety of reasons, including:
+
+           (a) a memory overwrite that happens to overwrite part of the
+               program stored in memory. This may result in the program
+               trying, for example, to execute data as if it is a
+               machine instruction.
+           (b) an attempt to take an executable compiled on one platform
+               for use on another, for example on an earlier version of 
+               the same chip.
+           (c) a truncated or corrupted executable is loaded for 
+               execution
+           (d) incomplete recompilation of source code, i.e. you changed
+               one C++ clas and didn&#39;t recompile all other code affected by
+               that change.
+
+    o BUS - A &quot;Bus Error&quot; may come, for example, from accessing unaligned 
+            data (i.e. like trying to access a 4 byte integer with a 
+            pointer to the middle of it). What this means will vary 
+            from platform to platform. (I haven&#39;t come up with a good 
+            example of this one yet.)
+
+            A &quot;Bus Error&quot; can also often indicate a memory overwrite, 
+            e.g. somebody wrote a number where a pointer is kept.  
+            _Often_ caused by going past the end of an array and into 
+            the system pointers at the start of the next memory block.
+
+
+  4. Debuggers
+
+  The previous section described at a basic level the types of signals that
+may occur. If our programs were only 10 lines long, the &quot;signal&quot; would
+be enough to understand the origin of any crash by simple code inspection. 
+Our executables are clearly much larger than this, so the next step is 
+to determine what the code was doing when the crash occured. The easiest 
+way to do this is to use a debugger.
+
+   4.1 core files
+
+    After a crash, you should find a &quot;core&quot; file in the directory where
+    the program was being executed. This is a memory image of the
+    process when it crashed and can be used to figure out what
+    the process was doing when the crash occured. If your job crashes
+    and you do not find a &quot;core&quot; file, your shell settings are probably
+    set to avoid core dumps:
+
+      - If you use tcsh:
+
+        o type &#39;limit coredumpsize&#39;. The value is probably set to &#39;0&#39;.
+        o type &#39;limit coredumpsize unlim&#39; to remove the limit.
+
+      - If you use bash:
+
+        o type &#39;ulimit -c&#39;. The value is probably set to &#39;0&#39;.
+        o type &#39;ulimit -c unlimited&#39; to remove the limit.
+
+    You will have to rerun your executable and after it crashes again you
+    should find a core file. To check that the core file does in 
+    fact come from the executable you were running, type &#39;file core&#39;. It 
+    will tell you which executable the core comes from as well as some other 
+    information. (Not all systems do this, but our three supported systems 
+    Sun, Linux2 and OSF do.) See section 11.1 for details about handling 
+    very large core files.
+
+   4.2 dbx (Sun)
+
+    The non-GUI debugger available on Sun is called &#39;dbx&#39;. As an example
+    of using the debugger to examine a core file, here is a slightly
+    modified version of the program which caused the SEGV above:
+
+        sunprompt&gt; cat main.c
+        #include &lt;iostream.h&gt;
+        void foo() {
+          int* bunk(0);
+          cout &lt;&lt; *bunk &lt;&lt; endl;
+        }
+        
+        main(int argc, char *argv[])
+        {
+          foo();
+        }
+        sunprompt&gt; CC -g main.c
+        sunprompt&gt; ./a.out 
+        Segmentation fault (core dumped)
+        sunprompt&gt; dbx a.out core
+        Reading symbolic information for a.out
+        core file header read successfully
+        Reading symbolic information for rtld /usr/lib/ld.so.1
+        dbx: program is not active
+        Reading symbolic information for libm.so.1
+        Reading symbolic information for libC.so.5
+        Reading symbolic information for libw.so.1
+        Reading symbolic information for libc.so.1
+        Reading symbolic information for libdl.so.1
+        Reading symbolic information for libc_psr.so.1
+        program terminated by signal SEGV (no mapping at the fault address)
+        Current function is foo
+            4     cout &lt;&lt; *bunk &lt;&lt; endl;
+        (dbx) where
+        =&gt;[1] foo(), line 4 in &quot;main.c&quot;
+          [2] main(argc = 1, argv = 0xeffff2fc), line 9 in &quot;main.c&quot;
+        (dbx) quit
+
+     Compilation/linking of a real BaBar executable is clearly
+     done differently than this toy example, but a traceback is 
+     obtained in the same way. For a crash in BetaApp, for 
+     example, one would type:
+
+     sunprompt&gt; dbx BetaApp core
+
+     and then &#39;where&#39; as above. For more details on interpreting the
+     the traceback, see section 5.
+
+     For more information on commands type &#39;help&#39; at the dbx prompt.
+
+     The dbx debugger on Sun has one quirk with templates, if you see
+     alot of complaints about them when you type &#39;where&#39;, simply type
+     &#39;where&#39; a second time and they will go away (leaving you with a
+     clean traceback).
+
+   4.3 ladebug (OSF)
+
+     On OSF a debugger called &#39;dbx&#39; exists, but it is not for use with C++.
+     The C++ debugger is called &#39;ladebug&#39; (it can also be used for Fortran
+     and C). As for dbx, it is launched to examine a core file with:
+ 
+     osfprompt&gt; ladebug your.exe core
+ 
+     where &quot;your.exe&quot; is the name of your executable.
+
+     The command &#39;where&#39; will work as for dbx. For more information on 
+     commands, see the man page (&#39;man ladebug&#39;) or type &#39;help&#39; at the 
+     ladebug prompt.
+
+   4.4 gdb (Linux)
+
+     The most common debugger used on linux is &#39;gdb&#39;. The syntax for 
+     examining a core file is:
+
+     linuxprompt&gt; gdb your.exe core
+
+     Some basic information is available from the man page (&#39;man gdb&#39;), 
+     but for detailed further information on gdb on linux type 
+     &#39;info gdb&#39;. The command &#39;where&#39; will work, equivalent alternatives 
+     in gdb are &#39;backtrace&#39; or &#39;bt&#39;.
+
+   4.5 Sun Workshop (Sun)
+
+     There is a product called Workshop on the suns.  It provides a graphical
+     interface to debugging tools and it lives in /opt/SUNWspro/bin/workshop.
+     Executing this command brings up a small list of icons.  The one with a
+     bug under a red barred-circle starts the debugger.  The one that looks
+     like a histogram is a performance analyzer.  There are help boxes and
+     web pages you can call up.  The debugger can analyze memory usage
+     patterns (see the &quot;Windows&quot; pull-down) as well as performance data.
+     The basic pattern for the latter is to locate the menu with the
+     &quot;Collector&quot; item and launch it.  (This menu is in the debugger).  Select
+     what you want the Collector to monitor, then begin execution under
+     the debugger.  When the program finishes, launch the Analyzer, which
+     will show you timing distributions.  You tell the analyzer the name
+     of the &quot;experiment&quot; that you set in the Collector window.
+     Note that the analyzer has trouble running on a display that is
+     fed by a channel established with ssh.
+
+     The workshop debugger is really just a facade on top of dbx.  You
+     can use it to *learn* about dbx by asking it to show the dbx window.
+     You drive the debugger with its GUI and watch what dbx commands come
+     out.  Or, you can just do whizbang stuff with the dbx window when the
+     GUI is not sufficient.
+
+
+   4.6 Other misc. notes
+
+       ...To Finish...
+
+      o debugging symbols, optimization
+      o core files versus running in the debugger itself
+
+
+
+  5. Obtaining information from a traceback (an example)
+
+  Here is an example traceback obtained from a crash of Elf (Remedy
+report 3455):
+
+t@1 (l@1) signal SEGV (no mapping at the fault address) in MapChipNode::nChannels (optimized)
+=&gt;[1] MapChipNode::nChannels(this = (nil)) (optimized), at 0x133a9d4 
+[2] L1DTsfTCDigiModule::convert(this = ???, list = ???, tc = ???) (optimized), at 0xcc80b0 
+[3] L1DTsfTCDigiModule::event(this = ???, anEvent = ???) (optimized), at 0xcc7ec8 
+[4] APPSequence::event(this = ???, anEvent = ???) (optimized), at 0x1562af4 
+[5] APPSequence::event(this = ???, anEvent = ???) (optimized), at 0x1562af4 
+[6] APPSequence::event(this = ???, anEvent = ???) (optimized), at 0x1562af4 
+[7] AppFramework::event(this = ???, anEvent = ???) (optimized), at 0x155a570 
+[8] OepFrameworkDriver::processTransition(this = 0xefffe840, tr = 0xed300008), at 0x134fc8c 
+[9] OepFrameworkDriver::processDatum(this = 0xefffe840, datum = 0x49b2f18), at 0x134d618 
+[10] OepFrameworkDriver::readLoop(this = 0xefffe840), at 0x134cb44 
+[11] OepFrameworkDriver::init(this = 0xefffe840, interp = 0x31b03c8), at 0x134c684 
+[12] OepFTclMain::run(this = 0xefffe840, argc = 1, argv = 0x31ab4d4), at 0x134a6f4 
+[13] main(0x2, 0xefffea04, 0x1a50fd8, 0x31ab4d0, 0x31b0340, 0x0), at 0x869ec0 
+
+The first thing that appears in the traceback is the &quot;signal&quot; received (SEGV
+in this case, see section 3) and then the entire series of &quot;frames&quot; or 
+functions called. The lowest numbered one is the one in which the problem
+occured and you can see the entire sequence of calls all the way back up to 
+the &quot;main&quot; routine of the program.
+
+  Several things can be seen immediately:
+
+     o This crash is a SEGV and from Frame &quot;[1]&quot; we can see that the
+       nChannels member function of a &quot;MapChipNode&quot; object has been 
+       called through a null pointer (note that this = nil)
+     o The Framework module that was running at the time this happened
+       was L1DTsfTCDigiModule (follow up the traceback until you get
+       to the first one of the form Xxxx::event, this will likely be
+       the guilty module if event processing was going on).
+   
+
+  6. Hung jobs
+
+   Occasionally you may find that you run an executable and it &quot;hangs&quot;,
+i.e. it seems to stop making progress processing events or whatever it
+should be doing and stays in one place without any further output. How
+to debug this? 
+
+   One first clue as to what is happening is if the process is taking 
+CPU or not (i.e. look with &#39;top&#39; or something similar on the machine where
+the job is running). If it is taking lots of CPU without seemingly 
+progressing, it may be caught in an infinite loop. If the job doesn&#39;t 
+take CPU, it may be waiting for something. For more information as
+to what is going on, there are a couple of possiblities:
+
+   6.1 attaching processes in the debugger  
+
+       All of the debuggers that we currently use (see section 4 above) 
+       also allow one to &quot;attach&quot; an already running process to see what 
+       it is doing. First determine the process ID for your running 
+       executable and then do (on linux for example):
+ 
+       linuxprompt&gt; gdb your.exe &lt;PID&gt;
+
+       where &quot;your.exe&quot; is the name of the executable you are running 
+       (including the path if necessary) and &lt;PID&gt; is the process ID
+       for the running process. Analogous things are available for
+       the other debuggers (see the man page for those). You need to do 
+       this on the machine where the job is running (clearly) and will 
+       in general only be able to attach processes which belong to you.
+
+       Once you are in the debugger, you can type &#39;where&#39; or anything 
+       else you might do to get more information about what is going
+       on.
+
+   6.2 pstack on SunOS5 - On the Solaris machines there is a useful command
+       which will provide a traceback-like list of function calls for 
+       a running executable. Simply determine the process ID of the running
+       executable with &#39;top&#39; or &#39;ps&#39; and then do
+
+       sunprompt&gt; /usr/proc/bin/pstack &lt;PID&gt;
+
+       where &lt;PID&gt; is the process ID.
+ 
+
+
+  7. Useful Framework features and tricks
+
+   7.1 NameAction
+
+       The Framework has a variety of &quot;Action&#39;s&quot;, one of the most useful
+       ones for debugging is &quot;NameAction&quot;.
+
+       Consider the following situation, for example: occasionally a 
+       memory overwrite can render a traceback useless:
+
+       Thread received signal SEGV 
+       pc address 0x100000000 is invalid; substituting RA 
+       stopped at [ 0x100000001] 
+       (ladebug) where 
+       &gt;0 0x100000001 
+
+       In this case it is clear that a memory overwrite has happened,
+       the program counter (pc, which normally contains the memory
+       address of the next machine instruction to execute) has an
+       unrealistic value.
+
+       To determine which Framework module was running when this happened,
+       add the two lines:
+
+       action enable NameAction
+
+       to your tcl file just before the &#39;ev begin&#39;. The Action prints
+       a message just before and after
+
+       &lt;...&gt;
+       APPExecutable: SvtEffMon: before processing an event... 
+       APPExecutable: SvtEffMon: after processing an event... 
+       APPExecutable: DchOprMon: before processing an event... 
+       Thread received signal SEGV 
+       pc address 0x100000000 is invalid; substituting RA 
+       stopped at [ 0x100000001] 
+       (ladebug) where 
+       &gt;0 0x100000001 
+
+       and which module was running at the time becomes clear. The output
+       is a bit, well, voluminous given the number of modules typically
+       running so this is clearly useful only for debugging and not for
+       routine running! In addition to cases like this particular 
+       example, NameAction can be useful to determine the origin of 
+       printout seen in the log file, verifying that the beginJob(..)
+       or event(...) function of a particular module is being called,
+       etc.
+
+       This Action should be included in most standard BaBar executables,
+       if it seems to be missing check that you have something like the
+       following in your AppUserBuild.cc:
+
+    #include &quot;RecoUtils/AppActionName.hh&quot;
+    //...
+    theFramework-&gt;actions()-&gt;append(new AppActionName); 
+
+
+   7.2 Skipping events  
+
+        Occasionally a crash will happen well into
+        an input file or collection and it is very useful for 
+        debugging to skip all events prior to the one in which the
+        crash occurs. One way to do this is to use the fact that 
+        the module EvtCounter (which appears in most of the BaBar
+        executables) is a Filter module. Suppose you want to skip
+        to the 851st (sequential) event in an input collection, simply
+        add the following to your tcl file:
+
+        module talk EvtCounter
+           skipStart set 1
+           skipStop set 850
+        exit
+
+        and then do an &#39;ev begin -nev 851&#39; to process only the 851st
+        event (or &#39;ev begin&#39; if you want to process all events starting
+        from the 851st one).
+
+        Skipping events is useful in many cases to examine a problematic
+        event multiple times. In certain cases like memory overwrites,
+        the crash may not appear unless the previous events are also
+        processed so skipping events may not help.
+
+        A faster method of doing this if you are reading from Objectivity
+        is the following;
+
+        module talk BdbEventInput
+           first set 851
+        exit
+
+        You should note in this case that the EventCounter only see events
+        starting at 851 and therefore only starts counting there.
+
+
+  8. Searching the release for code fragments
+
+  Often in the course of debugging, one will see either (a) a message
+in the log file or (b) a function call in the traceback that comes from
+someplace in the BaBar code base. It is often useful to figure out
+which piece of code is the source of the message or function call.
+The easiest way to do this is to use &#39;srtglimpse&#39;, which is a BaBar
+specific wrapper around a general glimpse utility. It prints lines
+from the BaBar code base which contain a given string.
+
+  See the man page for &#39;srtglimpse&#39; or type &#39;srtglimpse -h&#39; for more
+information, however here is one example:
+
+    prompt&gt; srtglimpse -H 8.6.2 &#39;foo&#39;  
+
+will print:
+
+    Aslund/src/fcstubs.F:       character*3 foo
+    Aslund/src/fcstubs.F:       equivalence (i, foo)
+    Aslund/src/fcstubs.F:       cdirtag = foo
+    AssocTools/testAssocTools.cc:   anotherString = new RWCString(&quot;foober&quot;);
+    &lt;...&gt;
+
+(You might want to pipe the output to &#39;more&#39; or &#39;less&#39; if there will be
+alot of it.) One thing to note is that &#39;srtglimpse&#39; uses an &quot;index&quot;
+which is made in advance (while the release is being built) in order to 
+make the search much faster. We make this index only for regular full
+builds (not for lettered ones) so if you are interested in release
+8.6.2a you will have to specify &#39;-H 8.6.2&#39; as in the example above.
+
+
+
+  9. Hypernews
+
+       ...To Finish...
+
+  o The main HN page (listing all HN groups) is:
+
+     http://babar-hn.slac.stanford.edu:5090/HyperNews/index/index.html
+
+    and that of the prelimbugs HN group is:
+
+     http://babar-hn.slac.stanford.edu:5090/HyperNews/get/prelimbugs.html
+
+
+
+ 10. Remedy
+
+       ...To Finish...
+
+
+  o The URL for the Remedy problem tracking system is:
+
+ www.slac.stanford.edu/BFROOT/www/Computing/Environment/Remedy/www/remedy1.html
+
+
+
+ 11. Misc. Tricks
+
+   11.1 Putting the core file someplace besides the current directory
+
+     Core files can be very big. If the directory where you run your
+     executable (and where the core file would be dumped) is someplace
+     where you have a limited quota (e.g. an afs volume or your home
+     directory on many systems), you may find that you do not have enough
+     space for your core file there. One trick which works on Sun and OSF
+     (but not on Linux) is to use a soft link to put the core file
+     someplace else:
+
+     sunprompt&gt; touch $SOMEPLACE/core
+     sunprompt&gt; ln -s $SOMEPLACE/core core
+
+     where &quot;$SOMEPLACE&quot; here indicates some (presumably bigger) scratch
+     space where you have write permission. 
+
+     Note also that dumping large core files to networked filesystems can
+     take a long time, so there is some speed advantage if &quot;$SOMEPLACE&quot; is 
+     a disk local to the machine where the job is being run.
+
+     If you are _really_ constrained for space, another possibility (that
+     may allow you to at least get a traceback) is to limit your core
+     file size such that it _will_ be truncated, i.e. in tcsh for example:
+
+     sunprompt&gt; limit coredumpsize 5M
+
+     and hope that there will be enough to get the traceback. Your mileage 
+     may vary doing this. (You could truncate it too much.)
+
+   11.2 &quot;watchmalloc&quot; on Sun for finding memory management problems
+
+     On Sun there is a method for finding certain types of memory
+     management problems such as deleting the same object twice, use
+     of uninitialized memory, etc. This uses a special shared library
+     which replaces the default, you can use this by setting an
+     environment variable (in tcsh for example):
+
+     sunprompt&gt; setenv LD_PRELOAD watchmalloc.so.1
+
+     Important: set this _only_ before running an executable interactively
+     for debugging and make sure you &#39;unsetenv LD_PRELOAD&#39; before (a)
+     compiling/linking something or (b) submitting anything to the batch
+     system. Both the batch system and the compiler have been seen
+     to behave strangely if this is set. I have even seen a case where 
+     someone could not make the &#39;diff&#39; command work properly with 
+     LD_PRELOAD set like this.
+
+     So what does watchmalloc do? Many memory corruption problems do not
+     actually cause a crash when the corruption actually happens, but only
+     manifest themselves (as a crash) downstream in some other piece of
+     code which is unlucky enough to need to use the corrupted memory. 
+     &quot;watchmalloc&quot; makes debugging easier by causing the crash to happen
+     immediately when the corruption happens. So if (a) you think your
+     problem may be due memory corruption as described above and (b)
+     the actual traceback you find from the crash leads you to 
+     believe that the corruption is happening elsewhere, the strategy 
+     for using watchmalloc is:
+
+       o compile code and link your executable
+       o setenv LD_PRELOAD watchmalloc.so.1
+       o run your executable _interactively_
+       o if it crashes, examine the core file: the traceback should give
+         you some indication of where the original corruption happened
+       o make sure to &#39;unsetenv LD_PRELOAD&#39; before doing anything else
+         otherwise you may see strange behavior as noted above.
+
+     For more information type &#39;man watchmalloc&#39; on Sun.
+
+   11.3 Truss and strace
+
+       Sometimes programs fail because they fail to obtain expected
+     resources, e.g., they fail to locate a file they need.  Such
+     a program may not crash, but may just exit saying &quot;Duh&quot; or some
+     other useless thing.  A great example occurs when you install
+     stripped, licensed code that you can not put in a debugger, but
+     which does not run when you first install it:  your guts tell you
+     it is installed wrong, but how?
+
+     There is a program called &#39;truss&#39; on the Sun.  Linux has a similar
+     program called &#39;strace&#39;. (I am not aware of something similar on OSF,
+     a &quot;strace&quot; program exists, but does something different.) These 
+     programs can attach to a running program or can run a program 
+     under them, e.g. 
+
+         sunprompt&gt; truss myProg -x paramX  
+
+     As the program executes, &#39;truss&#39; and &#39;strace&#39; watch for all system calls
+     and print them out, along with arguments.  Systems calls include
+     opening and closing files, memory requests, socket manipulations,
+     etc.  
+
+     Quite often, you can strace an aberrant program and see a system
+     call just before the program exits or fails that is obviously
+     related, or even the cause, of the program failure.
+
+   11.4 MALLOC_CHECK_ on Linux
+
+     This is an alternative approach to watchmalloc on Sun. If you
+     set this environment variable to 2 it will abort when it detects
+     certain misuses of memory. Setting it to 1 will only print a
+     message when these are detected.
+
+ 12. Sources of further information
+
+       ...To Finish...
+
+ 13. Credits
+
+       (Please add yourself if you correct, improve or add to the above.)
+
+       Original     Peter Elmer &lt;Peter.Elmer@cern.ch&gt;                17-Jan-2000
+       Additions    Ed Frank    &lt;efrank@upenn5.hep.upenn.edu&gt;        10-Apr-2000
+       Additions    Stephen J. Gowdy &lt;SGowdy@lbl.gov&gt;                10-Apr-2000
+       Misc.        Bob Jacobsen     &lt;Bob_Jacobsen@lbl.gov&gt;     21-Apr-2000
+
+</pre>
+    </body>
+</html>
+

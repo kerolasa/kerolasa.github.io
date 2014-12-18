@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+<meta name="author" content="Sami Kerola">
+<meta name="classification" content="personal home page">
+<meta name="contact_addr" content="kerolasa@iki.fi">
+<meta name="copyright" content="Copyright Sami Kerola">
+<meta name="description" content="logger(1) news">
+<meta name="distribution" content="global">
+<meta name="abstract" content="logger blog post">
+<meta name="keywords" content="logger blog post">
+<meta name="language" content="en">
+<meta name="owner" content="Sami Kerola">
+<meta name="rating" content="general">
+<meta name="revisit-after" content="15">
+<meta name="robots" content="index, follow">
+<link type="text/css" rel="stylesheet" href="kerolasa.css">
+<title>He's a logger(1), and he's okay</title>
+</head>
+<body>
+<h1>He's a logger(1), and he's okay</h1>
+<p class="justtext">The <a href=
+"https://github.com/karelzak/util-linux/blob/master/misc-utils/logger.c">
+logger(1)</a> command has been around for quite a while. Hopefully
+by now people are preferring logger when sending messages to syslog
+instead of creating random log files all over system. While the
+basic idea of logger has not been changed, in the last few months
+the command has got couple of new features.</p>
+<h2>journald support</h2>
+<p class="justtext">It is now possible to send structured messages
+to <a href=
+"http://0pointer.de/blog/projects/journalctl.html">journald</a>
+that is a system facility. A journal entry can multiple fields that
+look a lot like key value pairs. Here is a simple example of a
+journal entry.</p>
+<p class="justtext"></p>
+<pre>
+$ echo 'MESSAGE_ID=86184c3b1aa444f58ebe7b30fec1438b DOGS=bark CARAVAN=goes on' | logger --journald
+</pre>
+<p class="justtext">Assuming above example was logged one should
+find the message with.</p>
+<p class="justtext"></p>
+<pre>
+$ journalctl --output=json-pretty DOGS=bark
+</pre>
+<p class="justtext">The point of journal support is to allow
+structured data to be logged. This will permit easy finding,
+grouping, and analysis of messages. In journal entries
+<b>MESSAGE_ID</b> field is recommended as it is an excellent key to
+group or differentiate messages.</p>
+<p class="justtext">See also manual pages <a href=
+"http://man7.org/linux/man-pages/man1/journalctl.1.html">journalctl(1)</a>
+and <a href=
+"http://man7.org/linux/man-pages/man7/systemd.journal-fields.7.html">
+systemd.journal-fields(7)</a> before taking the logger
+<b>--journald</b> in use.</p>
+<h2>Identifiers</h2>
+<p class="justtext">In cases in which syslog messages need to be
+sent to remote syslogd or in which the users want to stick with the
+traditional local syslog message format the journal structured
+messages cannot be used. In these cases <b>--id=$$</b> will make
+the message analysis easier.</p>
+<p class="justtext">Traditionally logger <b>--id</b> has printed a
+process id (pid) of the logger command that varies at each
+execution of the command in a message. Assuming that a script has
+several logger invocations and multiple parallel scripts running at
+the same time it is not easy to figure out which of the runs inform
+which.</p>
+<p class="justtext">Printing a parent process id, <b>--id=$$</b>
+will mean that the pid field in syslog message will be the script's
+process id that does not change in between consecutive logger
+messages when sent from a single script session. This makes the
+streams of messages trivial.</p>
+<h2>RFC5424 syslog protocol is the new default</h2>
+<p class="justtext">The logger has used <a href=
+"http://tools.ietf.org/html/rfc3164">RFC3164</a> protocol to log
+remotely for a long time. The old protocol does not fully support
+the qualified hostname field in the syslog message header, and in
+some cases the stamp is not accurate. The new protocol sends
+messages that will look like this</p>
+<pre>
+Aug 9 09:56:36 192.168.1.10 1 2014-08-09T09:56:36,346136+0100 hostname.example.com tag - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="362834"] message test here
+</pre>
+<p class="justtext">The first time stamp tells when the syslog
+deamon both received and wrote the message. The IP address is the
+source address where the communication came from.</p>
+<p class="justtext">The number in the front of the second time
+stamp is the priority and it is untouched. After it comes the time
+stamp that tells when the message was sent using <a href=
+"http://en.wikipedia.org/wiki/ISO_8601#Dates">ISO-8601</a> format.
+The message has the maximum accuracy of <a href=
+"http://tools.ietf.org/html/rfc5424">RFC5424</a>. The hostname will
+be exactly the same than what the <a href=
+"http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>
+function returns. The <b>tag</b> field is what it has always been -
+followed by RFC defined separator hyphen.</p>
+<p class="justtext">The <b>timeQuality</b> is structured data in
+<a href="http://tools.ietf.org/html/rfc5424">RFC5424</a> terms. The
+field <b>tzKnown</b> tells if the time zone in client side time
+stamp is known. This is assumed to be true in a linux system. If
+the clock is synchronized with ntp the <b>isSynced</b> is 1. When
+the clock is not synchronized with ntp the the <b>isSynced</b> is
+0. The <b>syncAccuracy</b> informs maximum value how much the time
+stamp might be off in milliseconds.</p>
+<p class="justtext">All three new fields, the client side time
+stamp, the hostname, and the time quality, can be switched off by
+using <b>--rfc5424=notime,nohost,notq</b> option arguments. For
+users who prefer the old protocol there is <b>--rfc3164</b>
+option.</p>
+<h2>RFC3164 protocol improvement</h2>
+<p class="justtext">The <a href=
+"http://tools.ietf.org/html/rfc3164">RFC3164</a> implementations
+has added the hostname to the syslog header. The standard dictates
+that the hostname must be in a short format. If the <a href=
+"http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>
+returns a fully qualified name, such as a hostname.example.com, the
+domain is cut out from the first dot leaving only the hostname in
+place.</p>
+<p class="justtext">An example of a <a href=
+"http://tools.ietf.org/html/rfc3164">RFC3164</a> messages
+format.</p>
+<pre>
+&lt;5&gt;Aug 9 09:56:36 hostname tag[2502]: message test here
+</pre>
+<h2>Notes</h2>
+<p class="justtext">This page was updated
+2014-08-20T15:17:27+0300</p>
+</body>
+</html>

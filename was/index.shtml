@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=us-ascii" />
+        <meta name="author"
+              content="Sami Kerola" />
+        <meta name="classification"
+              content="personal home page" />
+        <meta name="contact_addr"
+              content="kerolasa@iki.fi" />
+        <meta name="copyright"
+              content="Copyright (C)2003 Sami Kerola" />
+        <meta name="description"
+              content="Websphere Application Server" />
+        <meta name="distribution"
+              content="global" />
+        <meta name="abstract"
+              content="Websphere Application Server" />
+        <meta name="keywords"
+              content=
+              "WAS, admin, administration, Websphere, Application, Server" />
+        <meta name="language"
+              content="en" />
+        <meta name="owner"
+              content="Sami Kerola" />
+        <meta name="rating"
+              content="general" />
+        <meta name="revisit-after"
+              content="15" />
+        <meta name="robots"
+              content="index, follow" />
+        <link type="text/css"
+              rel="stylesheet"
+              href="http://www.dc.inet.fi/kerola/kerolasa.css" />
+        <title>
+            WebSphere stop/start script
+        </title>
+    </head>
+    <body>
+        <h3>
+            WebSphere stop start restart status script
+        </h3>
+        <p>
+            I found out that stoping and starting WebSphere from
+            command line is quite complex task to perform so I
+            wrote a little script to make my life a bit easier.
+            Here's help screen:
+        </p>
+        <pre xml:space="preserve">
+Usage: juxto.sh [ACTION] [OPTION]
+  Actions:
+    -s       Start.
+    -p       Stop.
+    -f       Force stop.
+    -r       Restart running ape[s].
+    -t       Status.
+    -T       Long status.
+    -l       List application engines.
+  Options:
+    -a ape   Determine application engine, for example spcms.
+             Without this option all engines will get action.
+    -n node  Determine node aka host. Without this option local
+             node will get action. By using "*" you specify all.
+</pre>
+        <p>
+            To get all working you need two files and mayby change
+            WASINST and IBMHTTPD paths. Shell script and tcl file
+            are supposed to be in directory
+            WebShphere_inst_path/bin/
+        </p>
+        <p>
+            <a href="juxto.sh">juxto.sh</a><br />
+            <a href="juxto.tcl">juxto.tcl</a><br />
+            <a href="juxto-2.2.tgz">juxto-2.2.tgz</a> (contains
+            files above)
+        </p>
+        <p class="updated">
+            <!--#config timefmt="%d.%m.%Y at %R" -->
+             <small><em>Last update:<br />
+            <!--#echo var="LAST_MODIFIED" --></em></small>
+        </p>
+    </body>
+</html>

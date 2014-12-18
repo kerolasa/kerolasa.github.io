@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+<style xml:space="preserve" type="text/css">
+BODY {
+   background-color : #ffffff; 
+   margin : 10px; 
+   width : 520px; 
+}
+
+P.bread {
+   margin-left : 50px;
+   width : 520px;
+}
+
+OL.bread {
+   margin-left : 30px;
+   width : 520px;
+}
+
+P.title {
+   font-weight: bold;
+   text-align: center;
+}
+
+P.author {
+   text-align: center;
+}
+
+P.subtitle {
+    margin-left : 10px;
+    font-weight: bold;
+}
+
+P.where {
+    margin-left : 10px;
+}
+
+</style>
+
+        <title>Processing And Load Averages</title>
+    </head>
+
+    <body>
+        <h2>Processing And Load Averages</h2>
+
+        <p class="bread">A CPU-bound system&#39;s problems will be
+        anticipated in the load average. This is one of the most often
+        misunderstood performance metrics. A system&#39;s load is the
+        number of processes that are ready to run, including ones
+        currently running. This number is measured at regular, frequent
+        intervals. The load average, therefore, is the average of this
+        load number over a particular interval of time. There actually
+        are three load averages measured over different periods of time:
+        the most recent minute, the last five minutes, and the last 15
+        minutes.</p>
+
+        <p class="bread">If there are four processes that are performing
+        computations while the system is doing nothing else, then the
+        load average will be approximately four. The three different
+        measurements are present to indicate recent trends. If the
+        one-minute load average is ten, the five-minute figure is four,
+        and the 15-minute average is one, then you know not only that you
+        have a heavily loaded machine, but that the load has increased
+        rapidly over the past few minutes. If you got rid of several
+        runaway processes, you would expect the one-minute average to
+        drop quickly, but the 15-minute average would continue to remain
+        high.</p>
+
+        <p class="bread">But what is a &quot;high&quot; load average?
+        There is no single answer to this question. The average does not
+        consider the number of processors in a system. A load average of
+        eight on a single processor machine could be indicative of a
+        problem, but on a four-processor system it probably is
+        normal.</p>
+
+        <p class="bread">What type of process is &quot;ready to
+        run&quot;? Any process that needs some time on the CPU meets that
+        description. And a process that is currently running on a CPU is
+        also considered &quot;ready to run&quot; (some older versions of
+        SunOS [5.0, 5.1, and 5.2] got that wrong). But the system also
+        counts processes that are in a state called &quot;short-term disk
+        wait.&quot; Such processes are not quite ready to be scheduled
+        for a CPU, but will be soon.</p>
+
+        <p class="bread">The inclusion of processes in short-term wait
+        can skew the load average higher than one might expect. A process
+        that spends a great deal of time reading and writing to a local
+        disk will be included in the load average. Waiting for input from
+        a tty device is never considered a short-term wait, so a process
+        waiting for user input is not counted in the load average. A
+        process that spends most of its time reading and writing to a
+        serial line, such as uucico, kermit, or Z-modem, will not count
+        toward a higher load. In most cases, network I/O is not
+        considered short-term. But there is one important exception: NFS.
+        A process waiting for an NFS read is regarded as a short-term
+        disk wait. As a result, if an NFS server goes down, the load
+        average on the clients will soar even though the CPU itself is
+        not being used.</p>
+
+        <p class="bread">The load average is calculated primarily for the
+        purposes of the UNIX process-scheduling algorithm. The current
+        system load is included when calculating a process&#39;s CPU
+        utilization, which in turn will affect the priority that a
+        process is given for scheduling. Because it is convenient to see
+        that number, utilities let us examine the load. But remember that
+        this number is an internal kernel event calculated for a specific
+        purpose, and may not always make sense to you and me.</p>
+
+        <p class="bread">The load averages should not be used as the sole
+        means of assessing a system&#39;s performance. The average is an
+        excellent indicator, but other information also needs to be
+        considered. If you see a high load average, you should find out
+        why it&#39;s high. The answer may be that the high number is
+        actually perfectly normal and that nothing needs to be done to
+        improve performance.</p>
+    </body>
+</html>
+

@@ -1,0 +1,1117 @@
+<html>
+<head><title>Shell Differences - AZSAGE Presentation, 9/16/97</title></head>
+<pre>
+
+                          ----------------------------
+                           Mitigating the Obfuscation
+                            Circumscribing the Three
+                              Primary Unix Shells
+                                       or
+                            "Ohhh, so THAT's what
+                             they were doing at
+                             Berkeley in the 70s!"
+                          ----------------------------
+
+                                AZSAGE Meeting
+                              September 16, 1997
+                         Ralph Luethy, Sun Instructor
+                         Business & Industry Institute
+
+
+This presentation is in two parts.  The first part will examine those
+features common across all shells while the second compares and
+contrasts the three primary Unix shells: the Bourne shell, C shell,
+and Korn shell.
+
+PART I
+------
+
+A Brief Overview and History
+
+    - Bourne Shell
+        Steve Bourne of AT&T
+        /bin/sh and /sbin/sh (why two of them?)
+        Faster, smaller (207K RAM)
+        Standard default shell for UNIX and all startup scripts
+        Uses the $ prompt
+
+    - C Shell
+        Bill Joy (Co-founder Sun)
+        /bin/csh
+        Slower, bigger (261K RAM)
+        Added history
+        More builtins (echo, math, testing)
+        Uses the % prompt
+
+    - Korn Shell   (/bin/ksh)
+        David Korn
+        Written by AT&T just like Bourne shell
+        /bin/ksh
+        Bigger (365K RAM) but often faster than Bourne/C
+        Newer shell to Sun
+        Interactive command-line history
+        More builtins (print, math, testing)
+        Combines best features of Bourne and C shell
+        Can run Bourne shell scripts
+
+The Nature of a Shell Script in the Unix Environment
+
+    - A floor wax and a dessert topping
+
+        A command-line interpreter (e.g., % echo a*)
+        A programming language
+
+    - Violence in the Unix home (killing parents and forking children)
+
+        How a shell find commands
+            C/Korn aliases and functions are searched
+            Then builtins
+            Then utility using PATH
+        Forking
+        Parent sleeps
+        Execing
+
+    - Execution vs. sourcing
+
+        % cd
+        % vi tryit
+
+        -------------
+        |cd /tmp
+        |pwd
+        |
+
+        % chmod +x tryit
+
+        % tryit
+        /tmp
+
+        % pwd
+        what directory are we in?
+
+        % source tryit
+        /tmp
+
+        % pwd
+        what directory are we in now?
+
+    - The Unix philosophy
+        Small, focused utilities
+
+    - Standard in, Standard out, Standard error
+
+        File        Name       Destination/Source
+      Descriptor
+
+         0          stdin          Keyboard
+         1          stdout         Screen/Window
+         2          stderr         Screen/Window
+
+    - Redirection and pipes
+
+        % vi message
+        % mailx -s "About that meeting" fred < message
+
+        % ls > ls.out
+        % find / -print | wc -l
+
+    - Environmental vs. local
+
+        Shell Variables
+        ---------------
+        % set name=Fred
+        % echo $name
+        Fred
+        % csh
+        % echo $name
+        name: Undefined variable    <-----
+        % exit
+        % echo $name
+        Fred
+
+        Environment Variables
+        ---------------------
+        % setenv NAME Gloria
+        % echo $NAME
+        Gloria
+        % csh
+        % echo $NAME
+        Gloria                      <-----
+        % exit
+
+Metacharacters, A Favorite Among Unix Neophytes
+
+    - Quotations: double vs. single
+
+        # Use to preserve spacing
+        % echo -n "  Name:  "
+
+        # Interpreted vs. literal
+        % set name=Fred
+        % echo "$name"
+        % echo '$name'
+
+        # You may have problem with C shell history
+        % echo $name\!    <-- Ok
+        % echo "$name!"   <-- Nope
+
+    - The second most mysterious command line in all of Unix
+
+        % find / -name core -mtime +7 -exec rm {} \; -print
+
+    - The MOST mysterious command syntax in all of Unix
+
+        alias cd 'cd \!* ; set prompt="[\! ^H] `whoami`@`hostname` $cwd % "'
+
+        Gives you this prompt -> [15] luethy@olympus /tmp %
+
+Wildcards vs. Regular Expressions (RE)
+
+    Regular expressions are used by many Unix utilities, like awk, grep
+    and sed.  Even vi uses regular expressions.
+
+         Description                     Wildcard      RE
+    ------------------------             --------   --------
+    List or range                           []         []
+    Escape                                  \          \
+    Single unknown character                ?          .
+    0 or more of preceeding character                <char>*
+    0 or more of any character              *          .*
+    Beginning of line                                 ^RE
+    End of line                                       RE$
+    Beginning of word                                 \<RE
+    End of word                                       RE\>
+
+    Sample RE:      \<f.*th\>
+
+    Sample text:    Although he was filled with courage
+                    and blessed with amazing speed,
+                    he came in fourth because he
+                    fell down rounding the south turn.
+
+A Basic Shell Script Example
+
+    - The ALL IMPORTANT first line
+
+    % vi first
+
+    ----------------
+    |#!/bin/wc
+    |How many lines, words, and characters
+    |are in this file?
+
+    ----------------
+    |#!/bin/csh -f
+    |ls
+
+    ----------------
+    |#
+    |ls
+
+    ----------------
+    |ls
+
+    - Comments
+
+        # Here's a comment
+        cd /tmp  # here's an end-of-line comment
+
+    - Making it executable (or not)
+
+        % chmod +x first
+        % first
+        OR...
+        % csh first
+
+
+                                   ---------
+                                    PART II
+                                   ---------
+
+Differences between the three primary Unix shells: the Bourne shell,
+C shell, and Korn shell.
+
+Builtins (output provided by "man shell_builtins")
+
+                 command                      built into
+                 -------                     ------------
+                 alias                       csh, ksh
+                 bg                          csh, ksh, sh
+                 break                       csh, ksh, sh
+                 case                        csh, ksh, sh
+                 cd                          csh, ksh, sh
+                 chdir                       csh, sh
+                 continue                    csh, ksh, sh
+                 dirs                        csh
+                 echo                        csh, ksh, sh
+                 eval                        csh, ksh, sh
+                 exec                        csh, ksh, sh
+                 exit                        csh, ksh, sh
+                 export                      ksh, sh
+                 fc                          ksh
+                 fg                          csh, ksh, sh
+                 for                         ksh, sh
+                 foreach                     csh
+                 function                    ksh
+                 getopts                     ksh, sh
+                 glob                        csh
+                 goto                        csh
+                 hash                        ksh, sh
+                 hashstat                    csh
+                 history                     csh
+                 if                          csh, ksh, sh
+                 jobs                        csh, ksh, sh
+                 kill                        csh, ksh, sh
+                 let                         ksh
+                 limit                       csh
+                 login                       csh, ksh, sh
+                 logout                      csh, ksh, sh
+                 nice                        csh
+                 newgrp                      ksh, sh
+                 notify                      csh
+                 onintr                      csh
+                 popd                        csh
+                 print                       ksh
+                 pushd                       csh
+                 pwd                         ksh, sh
+                 read                        ksh, sh
+                 readonly                    ksh, sh
+                 rehash                      csh
+                 repeat                      csh
+                 return                      ksh, sh
+                 select                      ksh
+                 set                         csh, ksh, sh
+                 setenv                      csh
+                 shift                       csh, ksh, sh
+                 source                      csh
+                 stop                        csh, ksh, sh
+                 suspend          |          csh, ksh, sh
+                 switch           |          csh
+                 test             |          ksh, sh
+                 time             |          csh
+                 times            |          ksh, sh
+                 trap             |          ksh, sh
+                 type             |          ksh, sh
+                 typeset          |          ksh
+                 ulimit           |          ksh, sh
+                 umask            |          csh, ksh, sh
+                 unalias          |          csh, ksh
+                 unhash           |          csh
+                 unlimit          |          csh
+                 unset            |          csh, ksh, sh
+                 unsetenv         |          csh
+                 until            |          ksh, sh
+                 wait             |          csh, ksh, sh
+                 whence           |          ksh
+                 while            |          csh, ksh, sh
+
+Setting and displaying Variables
+
+    - All shells
+
+        echo $variable  # to display content of any variable
+
+    - Bourne and Korn
+
+        name=Fred   # shell (local) variable
+        set         # display all shell variables
+        export name # make it environment (global) variable
+        env         # display env. variables
+        unset name  # unset variable
+    
+    - Korn
+
+        export name=Fred # make shell AND env. variable with one statement
+        unset name       # unset both shell and env. variable
+
+    - C shell
+
+        set name=fred   # shell variable
+        set             # display shell variables
+        setenv NAME Joe # environment variable
+        env             # display env. variables
+
+A User's Environment
+
+    - Startup order
+
+            Bourne: /etc/profile, $HOME/.profile
+            Korn:   /etc/profile, $HOME/.profile, $HOME/.kshrc
+            Cshell: /etc/.login,  $HOME/.cshrc,   $HOME/.login
+
+    - Startup file contents for Bourne shell users:
+
+        /etc/profile:   environment variables to be shared by all Bourne users
+
+        $HOME/.profile: personal local/environment variables and startup stuff
+
+    - Startup file contents for Korn shell users:
+
+        /etc/profile:   environment variables to be shared by all Bourne users
+
+        $HOME/.profile: personal environment variables and startup stuff
+
+        $HOME/.kshrc:   shell variables, aliases
+
+    - Startup file contents for C shell users:
+
+        /etc/.login:  environment variables to be shared by all C shell users
+
+        $HOME/.login: personal environment variables, startup stuff and
+                      "set path=()"
+
+        $HOME/.cshrc: shell variables, aliases,
+
+Arrays
+
+    - Bourne shell
+
+        No array support
+
+    - Korn shell
+
+        name[0]=Fred     # initialize
+        name[10]=Joe     # elements between 0 and 10 are not created
+        echo ${name[0]}  # display single element
+        echo ${name[*]}  # all elements, displays "Fred Joe"
+        echo ${#name[*]} # number of elements in array
+    
+    - C shell
+
+        set names=(Joe Gloria Fred)
+        echo $names[1]   # this displays "Joe" (no 0 index)
+        set list=`ls`    # create array containing filenames
+        echo $list[1]    # displays first filename
+
+Aliases
+
+    - Bourne shell
+
+        No aliases (use functions instead)
+
+    - Korn shell
+
+        $ alias home='cd ; ls'
+    
+    - C shell
+
+        % alias home 'cd ; ls'
+
+Generating Standard Output (stdout)
+
+    - The /usr/bin/echo utility and the Bourne/Korn shell builtin:
+
+        Used with with no parameters generates a CR
+        May suppress a CR on the end of a line with "\c"
+            (e.g., echo "Name: \c")
+
+    - The C shell echo builtin
+
+        Used with no parameters generates no output
+        May suppress a CR on the end of a line with the "-n" option
+            (e.g., echo -n "Name: ")
+
+Getting Shell Input
+
+    - Bourne and Korn shell:
+
+        echo "Name: \c"
+        read name
+        echo $name
+    
+    - C shell:
+
+        echo -n "Name: "
+        set name = $<
+        echo $name
+
+    - Korn shell:
+
+        read name?"Enter name: "    
+        echo $name
+
+History
+
+    - Bourne shell
+
+        No history
+    
+    - C shell
+
+        % set history=50
+        % ls /tmpp
+        /tmpp: No such file or directory
+        % history
+        1  set history=20
+        2  ls /tmpp
+        3  history           [display history]
+        % !s                 [rerun last command that started with s]
+        % !2                 [rerun command number 2]
+        % !2:s/tmpp/tmp      [rerun command number 2, substitue tmpp with tmp]
+        ls /tmp
+        ...
+        % !!                 [repeat last command]
+
+    - Korn shell
+
+        $ vi ~/.kshrc
+        set -o vi
+        $ . ~/.kshrc
+        $ ls /tmpp
+        $ [press escape key then vi's "hjkl" keys to navigate]
+        $ history
+        $ r
+
+Variables and Command Line Parameters
+
+    - Bourne, Korn, and C shell
+
+        $1, $2, ... $9 - command line parameters
+        $#             - Number of command line parameters
+        $0             - Name of command
+        $10            - Wrong!  Interpreted as $1 with 0 appended
+        shift          - Shift args one position to left
+
+Exit Status
+
+    - Bourne and Korn
+
+        $?
+    
+    - C shell
+
+        $status
+
+Command Substitution
+
+    - All shells use the accent grave characters to surround a command.
+      The command will be run by the shell and its output will substitute
+      the command.
+
+      % set today=`date`
+      $ today=`date`
+      $ echo "It is now: `date`"
+
+    - Korn shell uses something different in addition to accent graves.
+
+      $ today=$(date)
+
+      You can use the following syntax to set the value of a variable
+      to the contents of a file.
+
+      $ list=$(< /etc/passwd)
+    
+    - Table driven mail example
+
+      % vi list
+      dehaan@mc.maricopa.edu
+      sheoran@mc.maricopa.edu
+      stevenu@unspoken.com
+      sweeney@mc.maricopa.edu
+
+      % mailx -s "Meeting" `cat list` < message
+
+Math
+
+    - The expr utility is available to any shell but is required when
+      doing math in the Bourne shell.
+
+        total=`expr $t1 + $t2`
+
+    - The C shell
+
+        @ total = 10
+        @ total++
+        @ total = 5 + 1
+
+    - Korn Shell
+
+        let i=i+4
+        let "i = i + 1"
+
+        if let "total == 100"    OR...   if (( total == 100 ))
+        then
+            ...
+        fi
+
+Debugging
+
+    - Bourne and Korn shell
+
+        #!/bin/sh
+        set -v  # verbose, outputs line as typed
+        set -x  # echo, outputs line as interpreted
+        set +v  # verbose off
+        set +x  # echo off
+    
+    - C shell
+
+        #!/bin/csh -xv # turn echo and/or verbose on
+        set verbose    # verbose on
+        set echo       # echo on
+        unset verbose  # verbose off
+        unset echo     # echo off
+
+Testing
+
+    - All shells may use the test utility (use man test).  The test
+      utility is also spelled "[".
+
+      -r filename     True if filename exists and is readable.
+ 
+      -w filename     True if filename exists and is writable.
+ 
+      -x filename     True if filename exists and is executable.
+ 
+      -f filename     True if filename exists  and is a regular file.
+ 
+      -d filename     True if filename exists and is a directory.
+ 
+      -h filename     True if filename exists and is a symbolic link.
+ 
+      -c filename     True if filename exists and is a character special file.
+ 
+      -b filename     True if filename exists and is a block special file.
+ 
+      -p filename     True if filename exists and is a named pipe (fifo).
+ 
+      -u filename     True if filename exists and its set-user-ID bit is set.
+ 
+      -g filename     True if filename exists and its set-group-ID bit is set.
+ 
+      -k filename     True if filename exists and its  sticky bit is set.
+ 
+      -s filename     True if filename exists and has a size greater than zero.
+ 
+      -z s1           True if the length of string s1 is zero.
+ 
+      -n s1           True if the length of the string s1 is non-zero.
+ 
+      s1 = s2         True if strings s1 and s2 are identical.
+ 
+      s1 != s2        True if strings s1 and s2 are not identical.
+ 
+      s1              True if s1 is not the null string.
+ 
+      exp1 -eq n2     True if the integers exp1 and exp2 are alge-
+                      braically equal.  Any of the comparisons -ne,
+                      -gt, -ge, -lt, and -le may be used  in  place
+                      of -eq.
+ 
+      -L filename     True if filename exists and is a symbolic link.
+ 
+      !               Unary negation operator.
+ 
+      -a              Binary and operator.
+ 
+      -o              Binary or operator (-a has higher precedence than -o).
+ 
+      (condition)     Parentheses for grouping.  Notice also that
+                      parentheses are meaningful to the shell and,
+                      therefore, must be quoted.
+
+    - C shell builtin file testing
+
+      -r has read permission
+      -w has write permission
+      -x has execute permission
+      -e exists
+      -o is owner
+      -z zero size
+      -f a normal file
+
+    - Bourne/Korn builtin use same syntax as test utility
+
+Flow Control
+
+    - Bourne and Korn
+
+        # infinite while loop
+        while :
+        do
+            echo "^G Hello"
+        done
+
+        # Conditional while/do/done
+        while ( test -f flagfile )
+        do
+            echo "File still there"
+        done
+
+        # If construct
+        if test $# = 0
+        then
+            echo "Not enough arguments"
+        fi
+
+        # alternate syntax to above
+        if [ $# = 0 ] ; then
+            echo no arguments
+        fi
+
+        if test $# -ne 2
+        then
+            echo "Usage: crypt <infile> <outfile>"
+            exit
+        fi
+
+        if test "$1" = "-o"
+        then
+            echo "-o option was used"
+        fi
+
+        if test "`whoami`" != "root"
+        then
+            echo "Sorry, you must be root"
+        fi
+
+        if test $# -ne 2
+        then
+            echo "Usage: command arg1 arg2"
+            exit
+        elif test "`whoami`" != "root"
+        then
+            echo "Must be root"
+            exit
+        else
+            echo "Ok to proceed"
+        fi
+
+        # case construct
+        echo -n "Choice: "
+        read ans
+        case $ans in
+            1) echo "Choice 1 entered."
+                ;;
+            *) echo "Try again"
+                ;;
+        esac
+
+        # using while loop to read a file in one line at a time
+        while read i
+        do
+            echo "$i"
+        done < /etc/passwd
+
+        # for loop
+        for filename in `ls`
+        do
+            echo $filename
+        done
+
+        # Repeat something n times
+        for filename in 1 2 3 4 5 6 7 8 9 0 1 2
+        do
+            echo $filename
+        done
+
+    - C shell
+
+        # while loop
+        @ count = 0
+        @ max = 10
+        while( $count < $max )
+            echo $count
+            @ count++
+        end
+
+        # foreach loop
+        foreach filename ( passwd hosts group )
+            echo $filename
+        end
+
+        # foreach and a file's contents
+        foreach filename ( `cat /etc/passwd` )
+            echo $filename
+        end
+
+        # switching
+        echo -n "Enter Choice: "
+        set ans = $<
+        switch ( $ans )
+            case "1":
+                ...
+                breaksw
+            case "2":
+                ...
+                breaksw
+            case [yY]*:
+                echo you answered yes
+                breaksw
+            default:
+                echo -n "Choice selected is not available. "
+                goto begin
+                breaksw
+        endsw
+
+        # Using if to examine command line parameters
+        if ( $#argv != 2 ) then
+            echo "Usage: command arg1 arg2"
+            exit 1
+        endif 
+
+        # using if and builtin testing to examine existence of a file
+        if( -f addscene ) then
+            echo "found file"
+        else
+            echo "did not find file"
+        endif
+
+        # if file does not exist
+        if( ! -f addscene ) then
+            echo "file does not exist"
+        else
+            echo "file exists"
+        endif
+
+        # search file for string the hard way
+        #!/bin/csh
+        grep root /etc/passwd
+        if ( $status == 0 ) then
+            echo yep
+        endif
+
+        # search file for string the sleek way
+        if { grep root /etc/passwd > /dev/null } then
+            echo "found root in /etc/passwd"
+        else
+            echo "did not find root in /etc/passwd"
+        endif
+
+        # if and command exit status
+        if ! { /bin/rm dummy } then
+            echo "could not remove file"
+        else
+            echo "file removed"
+        endif
+
+        # while and command line arguments
+        @ count = 0
+        while ( $count <= $#argv )
+            echo $argv[$count]
+            @ count++
+        end
+
+                 ==============================================
+                  Miscellaneous Advanced Features and Examples
+                 ==============================================
+
+Catching interrupts and trapping
+
+    - Bourne and Korn
+
+        # do a "man -s 5 signal" to list all possible signals
+        # 2 is for interrupts (ctrl-c)
+        trap "echo you interrupted me!; exit" 2
+        sleep 30
+
+    - C shell
+
+        #!/bin/csh
+        onintr catch
+        echo running
+        touch /tmp/tempfile
+        sleep 30
+        exit 0
+
+        catch:
+            echo Caught Interrupt\!  Cleaning up...
+            rm /tmp/tempfile
+
+    - Korn Shell
+
+        #!/bin/ksh
+        function cleanupAndExit {
+            echo cleaning up...
+            rm -f /tmp/tempfile
+            exit 0
+        }
+
+        # Common trap constants
+        #   EXIT (the program ends normally or on calling exit)
+        #   INT  (user types ctrl-c)
+        trap cleanupAndExit INT
+        sleep 60.
+
+Functions
+
+    - Bourne and Korn
+
+        hello() {
+            echo hello $1
+        }
+
+        hello there
+
+    - Korn
+
+        function hello {
+            echo hello $1
+        }
+
+        hello Fred
+    
+    - C shell
+        No functions (aliases and subshells are as close
+        as you can get)
+
+Setuid
+
+    % su
+    # vi ckd
+
+    -----------------
+    |#!/bin/csh -fb
+    |touch /hello
+
+    OR...
+
+    -----------------
+    |#!/bin/ksh -p
+    |touch /hello
+
+    OR...
+
+    -----------------
+    |#!/bin/sh -p
+    |touch /hello
+
+    # chmod 4755 ckd
+    # exit
+    % ckd
+
+Korn shell Autoloading
+
+    $ mkdir -p ~/.autoload/math
+    $ cd ~/.autoload/math
+    $ vi math_min
+    ------------------------------
+    |function math_min
+    |{
+    |   if(( $1 <= $2 )) ; then
+    |       print $1
+    |   elif (( $2 < $1 )) ; then
+    |       print $2
+    |   fi
+    |
+    |   return 0
+    |}
+    
+    $ export FPATH=~/.autoload/math
+    $ math_min 5 10
+    5
+
+Sed
+
+    # delete line 5 only
+    sed '5d' $testdata > $outfile
+
+    # delete lines 5 thru 10
+    sed '5,10d' $testdata > $outfile
+
+    # delete lines 45 to the end
+    sed '45,$d' $testdata > $outfile
+
+    # delete any line containing the word 'nobody'
+    sed '/nobody/d' $testdata > $outfile
+
+    # delete from any line containing 'dog' to
+    # the next line containing 'cat'
+    sed '/nobody/,/sync/d' $testdata > $outfile
+
+    # delete first line ending with "csh" thru line 23
+    sed '/csh$/,23d' $testdata > $outfile
+
+    # replace all occurences of "Diag" or "diag" with "Big Wheel"
+    sed 's/[dD]iag/Big Wheel/g' $testdata > $outfile
+
+    # replace ":65534:" with "-->:65534:<--".  The "&" character
+    # is replaced with the search pattern.
+    sed 's/:65534:/-->&<--/g' $testdata > $outfile
+
+    # Put "EOL" on end of lines starting with first occurrence
+    # of "root" down to next line containing "news".  Will
+    # repeat if "root" and "news" found again.
+    sed '/root/,/news/s/$/& EOF/' $testdata > $outfile
+
+    # delete blank lines (characters between [ and ] are space and tab.
+    # i.e. "[<space><tab>]"
+    sed '/^[    ]*$/d' $testdata > $outfile
+
+    # do multiple sed edits (need -e for each)
+    sed -e 's/root/ROOT/' -e "s/daemon/DEVIL/" $testdata > $outfile
+
+    # Use the '-n' option (no output) and the 'p' (print) option.  Only
+    # those lines with "uucp" will be sent to stdout
+    sed -n '/uucp/p' $testdata > $outfile
+
+    # use a sed script instead of a command line instruction
+    sed -f /tmp/script.sed /tmp/passwd
+
+    # with given data will reverse columns in each line
+    Jane 133
+    Robert 455
+    Mary 98733
+
+    sed 's/\([a-zA-Z]*\) \([0-9]*\)/\2 \1/' /tmp/textfile
+
+Awk/Nawk
+
+    # uses default action, will print each line
+    nawk '/.*/' $data
+
+    # use default pattern, will print all lines
+    nawk '{ print }' $data
+
+    # use given pattern and action
+    nawk '/Fred/ { print $2, $1 }' filename
+
+    # examine sixth column of ps output (both examples do same thing)
+    ps -ef | nawk '$6 == "console" { print $0 }'
+    ps -ef | nawk '{ if( $6 ~ "console" ) print $0 }'
+
+    # Demonstrates how to pass a shell variable inside an awk statement.
+    set name=root
+    nawk 'BEGIN { FS=":" } ; /^'$name':/ { print $0 }' /etc/passwd
+
+    # same as above
+    awk -F: '/^root/ { print $6 }' /etc/passwd
+
+    # process those lines with a single digit on the end of the line
+    nawk '/[0-9]$/ { print $4 "\t" $8 }' datafile
+
+    #####
+    # This command demonstrates how to set and use a variable
+    nawk '{ total = $8 ; print $1, total }' $data
+
+    #####
+    # This command demonstrates how to keep a running total of the
+    # eighth field and then print it.
+    nawk '{ total += $8 } ; END { print total }' $data
+
+    #####
+    # use NR (number of current record)
+    nawk '{ print NR, $1 }' $data
+
+    #####
+    # use ARGC and ARGV, call like this: nawk -f tryawk 1 2 3
+    # The curly brace following "BEGIN" must be on the same line.
+    # NOTE: ARGV is not available in awk, just nawk.
+    BEGIN {
+        print ARGC - 1 " arguments passed"
+        print "The first argument is " ARGV[1]
+    }
+
+    #####
+    # Example of the if command that makes sure user
+    # has passed in enough arguments.  Try it like this:
+    #   nawk -f tryawk
+    # then this:
+    #   nawk -f tryawk arg1 arg2
+    BEGIN {
+        if( ARGC - 1 < 1 )
+        {
+            print "usage: " ARGV[0] " arg1 arg2"
+        }
+    }
+
+    #####
+    # Example of the while loop.  Prints first four fields of
+    # each record using $i variable.
+    {
+        i = 1
+        while( i <= 3 )
+        {
+            printf( "%s ", $i )
+            i++
+        }
+
+        printf( "\n" )
+    }
+
+    #####
+    # This for loop example prints all fields one per line
+    {
+        for( i = 1 ; i <= NF ; i++ )
+            print $i
+    }
+
+    #####
+    # Example of using an array
+    BEGIN { OFS = "\t" }
+
+    # assign first field of each record to list array
+    # ($0 is the entire record/line)
+    {
+        list[NR] = $1
+    }
+
+    # when finished reading records display them
+    END {
+        print "the list of regions is:"
+        for( i = 1 ; i < NR ; i++ )
+            print list[i]
+    }
+
+    #####
+    # print records in reverse order
+    nawk '{a[NR] = $0 } \
+        END { \
+            for( c = NR; c > 0; c-- ) \
+                print c, a[c] \
+        }' cats
+
+    #####
+    # Example of how to use words for array indices (associative arrays)
+    {
+        a[$1]++
+    }
+    END { for( c in a ) print c, a[c] }
+
+    #####
+    # The "contains" relational operator
+    nawk '{ if( $2 ~ /E/ ) print $2, $1 }' $data
+
+    #####
+    # The "not contains" relational operator
+    nawk '{ if( $2 !~ /E/ ) print $2, $1 }' $data
+
+    #####
+    # The "==" equality operator
+    nawk '{ if( $2 == NW ) print $2, $1 }' $data
+
+    #####
+    # The "!=" equality operator
+    nawk '{ if( $2 != NW ) print $2, $1 }' $data
+
+    #####
+    # The && logical AND operator
+    nawk '{ if( $2 ~ /E/ && $2 ~ /W/ ) print $2, $1 }' $data
+
+    #####
+    # The logical OR operator
+    nawk '{ if( $0 ~ /E/ || $0 ~ /W/ ) print $2, $1 }' $data
+
+    #####
+    # The logical AND operator
+    nawk '{ if( $2 ~ /E/ && $2 ~ /W/ ) print $2, $1 }' $data
+
+    #####
+    # This example of the "next" statement displays all lines
+    # where the fifth field is 4.5 or greater.
+    nawk '{ if( $5 < 4.5 ) next; print $1 }' $data
+
+    #####
+    # Writing your own functions
+    function tryit() {
+        print "tryit running"
+        return 10
+    }
+
+    BEGIN { print "tryit() returned: " tryit() }
+
+    # how to use a shell variable within an awk statement
+    set count = 5
+    awk 'BEGIN { printf ( "%03d\n", '$count' ) ; exit }'
+
+</pre></html>

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<html>
+    <head>
+        <meta http-equiv="Content-Type"
+        content="text/html; charset=iso-8859-1" />
+
+        <meta name="author" content="Sami Kerola" />
+
+        <meta name="classification" content="personal home page" />
+
+        <meta name="contact_addr" content="kerolasa@iki.fi" />
+
+        <meta name="copyright" content="Copyright Sami Kerola" />
+
+        <meta name="description" content="perunaletun resepti" />
+
+        <meta name="distribution" content="global" />
+
+        <meta name="abstract" content="perunaletun resepti" />
+
+        <meta name="keywords"
+        content="resepti, peruna, perunalettu, l&#228;tty, perunal&#228;tty, lettu" />
+
+        <meta name="language" content="fi" />
+
+        <meta name="owner" content="Sami Kerola" />
+
+        <meta name="rating" content="general" />
+
+        <meta name="revisit-after" content="15" />
+
+        <meta name="robots" content="index, follow" />
+
+        <link type="text/css" rel="stylesheet"
+        href="kerolasa.css" />
+
+        <title>Perunalettu</title>
+    </head>
+
+    <body>
+        <h2>Perunalettu</h2>
+
+        <p class="justtext">
+            <ul>
+                <li>1 raaka kuorittu peruna</li>
+
+                <li>sipulia, nelj&#228;nnes sipulista on osoittautunut
+                aika hyv&#228; m&#228;&#228;r&#228;</li>
+
+                <li>1 kananmuna</li>
+
+                <li>1 ruokalusikallinen vehn&#228;jauhoja</li>
+
+                <li>suolaa</li>
+
+                <li>maustetta, esim. pippurisekoitusta</li>
+            </ul>
+        </p>
+
+        <p class="justtext">Pilko peruna ja sipuli. Lis&#228;&#228; muna,
+        jauhot ja mausteet. Laita kaikki edell&#228;mainitut
+        tehosekottimeen ja soseuta. Haluttaessa lettuaineksen voi
+        j&#228;tt&#228;&#228; hieman rakeiseksi, mutta suuria
+        m&#246;ykkyj&#228; tulisi v&#228;ltt&#228;&#228;. Paista pannulla
+        kauniin ruskeaksi kummaltakin puolelta. Letun p&#228;&#228;lle
+        voi laittaa salaattia, lihaleikeleit&#228;, jauheliha,
+        sienimuhennosta tai vaikka ylij&#228;&#228;m&#228;
+        kastikkeen.</p>
+
+        <p class="justtext">T&#228;m&#228;n ohjeen on kehitellyt
+        &#228;itini Mailis Kerola. Pohjois-pohjanmaalaisesta taustastani
+        johtuen olen tottunut kutsumaan t&#228;t&#228; ruokaa my&#246;s
+        nimill&#228; perunal&#228;tty, pottulettu ja pottul&#228;tty.
+        It&#228;suomalaisille tiedoksi, pottu ei ole pullo
+        t&#228;ss&#228; ohjeessa.</p>
+
+    </body>
+</html>
+
