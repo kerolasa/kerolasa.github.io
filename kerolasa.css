@@ -1,4 +1,5 @@
 BODY {
+width: 640px;
 font-size: 16px;
 }
 A {
@@ -9,16 +10,19 @@ P.justtext {
 float: none;
 font-size: medium;
 margin-left: 20px;
+width: 640px;
 }
 DIV.justtext {
 float: none;
 font-size: medium;
 margin-left: 20px;
+width: 640px;
 }
 P.address {
 float: none;
 font-size: medium;
 margin-left: 45px;
+width: 640px;
 }
 TABLE {
 float: none;
