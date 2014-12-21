@@ -21,15 +21,20 @@
 <title>Sami Kerola</title>
 </head>
 <body>
+<section itemscope itemtype="http://data-vocabulary.org/Person">
 <p class="where">Work</p>
 <p class="justtext">address<br /></p>
-<p class="address">lastminute.com<br />
-TVLG Systems Engineering<br />
+<p class="address">
+<div itemprop="worksFor" itemscope itemtype="http://schema.org/Organization">
+<span itemprop="legalName">lastminute.com</span><br />
+<span itemprop="jobTitle">TVLG Systems Engineering</span><br />
 Sami Kerola<br />
-77 Hatton Garden<br />
-London<br />
-EC1N 8JS<br />
-United Kingdom</p>
+<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+<span itemprop="streetAddress">77 Hatton Garden</span><br />
+<span itemprop="addressLocality">London</span><br />
+<span itemprop="postalCode">EC1N 8JS</span><br />
+<span itemprop="addressCountry">United Kingdom</span></p>
+</div>
 <div class="justtext">
 <table border="0" cellspacing="0" cellpadding="0" summary="work">
 <tr>
@@ -38,26 +43,29 @@ United Kingdom</p>
 </tr>
 <tr>
 <td>mobile</td>
-<td class="pad"><a href="tel:+447771556538">+44 7771 556 538</a></td>
+<td class="pad"><a href="tel:+447771556538" itemprop="telephone">+44 7771 556 538</a></td>
 </tr>
 <tr>
 <td>web page</td>
-<td class="pad"><a href="http://www.lastminute.com/">http://www.lastminute.com/</a></td>
+<td class="pad"><a href="http://www.lastminute.com/" itemprop="url">http://www.lastminute.com/</a></td>
 </tr>
+</div>
 </table>
 </div>
 <p class="where">Home</p>
 <p class="justtext">address<br /></p>
-<p class="address">Sami Kerola<br />
-95 Ormiston Grove<br />
-London<br />
-W12 0JP<br />
-United Kingdom</p>
+<p class="address"><span itemprop="name">Sami Kerola</span><br />
+<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+<span itemprop="streetAddress">95 Ormiston Grove</span><br />
+<span itemprop="addressLocality">London</span><br />
+<span itemprop="postalCode">W12 0JP</span><br />
+<span itemprop="addressCountry">United Kingdom</span></p>
+</div>
 <div class="justtext">
 <table border="0" cellspacing="0" cellpadding="0" summary="home">
 <tr>
 <td>email</td>
-<td class="pad"><a href="mailto:kerolasa@iki.fi">kerolasa@iki.fi</a></td>
+<td class="pad"><a href="mailto:kerolasa@iki.fi" itemprop="email">kerolasa@iki.fi</a></td>
 </tr>
 <tr>
 <td>gnupg</td>
@@ -65,11 +73,11 @@ United Kingdom</p>
 </tr>
 <tr>
 <td>web page</td>
-<td class="pad"><a href="http://www.iki.fi/kerolasa/">http://www.iki.fi/kerolasa/</a></td>
+<td class="pad"><a href="http://www.iki.fi/kerolasa/" itemprop="url">http://www.iki.fi/kerolasa/</a></td>
 </tr>
 </table>
 </div>
-<p><img src="qr.png" height="200" width="200" alt="contact info QR code" /></p>
+</section>
 <p><a href="second.html">Second page.</a></p>
 <p><a href="http://www.linkedin.com/in/kerolasa"><img src="linkedin.png" alt="Linkedin" width="80" height="15" /></a>
 <a href="https://www.openhub.net/accounts/kerolasa"><img src="openhub.png" alt="Open Hub" width="80" height="15" /></a>
