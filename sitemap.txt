@@ -1,5 +1,4 @@
 http://kerolasa.github.io/
-http://kerolasa.github.io/404.html
 http://kerolasa.github.io/HOWTO-Basic-Debugging.html
 http://kerolasa.github.io/amsterdam_pubs.html
 http://kerolasa.github.io/cv.pdf
