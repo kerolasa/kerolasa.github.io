@@ -4,11 +4,15 @@
 # 2008-10-24
 # Sami Kerola <kerolasa@iki.fi>
 
-POS=0
-LAST=$((${#1} - 1))
-LEN=${#1}
+SCRIPT_INVOCATION_SHORT_NAME="${0##*/}"
+set -e
+trap 'echo "$SCRIPT_INVOCATION_SHORT_NAME: exit on error in line $LINENO"; exit 1' ERR
+set -u
 
 Prefixes() {
+	if [ $2 -eq 0 ]; then
+		return
+	fi
 	case $1 in
 		4)  printf " thousand ";;
 		7)  printf " million ";;
@@ -20,7 +24,7 @@ Prefixes() {
 }
 
 Hundreds() {
-	OneToNine $1
+	OneToNine $1 &&
 	printf " hundred "
 }
 
@@ -35,7 +39,9 @@ TeenTens() {
 		7)  printf "seventeen";;
 		8)  printf "eighteen";;
 		9)  printf "nineteen";;
+		0)  return 1
 	esac
+	return 0
 }
 
 Tens() {
@@ -46,7 +52,7 @@ Tens() {
 		5)  printf "fifty";;
 		8)  printf "eighty";;
 		0)  ;;
-		?)  OneToNine $1; printf "ty ";;
+		?)  OneToNine $1 && printf "ty ";;
 	esac
 }
 
@@ -58,7 +64,9 @@ LongTens() {
 		8)  printf "eigh";;
 		?)  OneToNine $1;;
 	esac
-	printf "ty "
+	if [ $? -eq 0 ]; then
+		printf "ty "
+	fi
 }
 
 OneToNine() {
@@ -72,37 +80,83 @@ OneToNine() {
 		7)  printf "seven";;
 		8)  printf "eight";;
 		9)  printf "nine";;
+		0)  return 1
 	esac
+	return 0
 }
+
+rewindPos() {
+	case $1 in
+		0)
+			thatmuch=1
+			ppos=0
+			return
+			;;
+		1)
+			thatmuch=2
+			ppos=0
+			return
+			;;
+	esac
+	ppos=$(($1 - 2))
+}
+
+if [ $# -ne 1 ]; then
+	echo "usage: $0 <digit>" >> /dev/stderr
+	exit 1
+fi
+
+case $1 in
+	*[!0-9]*)
+		echo "$0: $1: is not a number" >> /dev/stderr
+		exit 1
+		;;
+esac
 
 if [ $1 -eq 0 ]; then
 	echo zero
 	exit 0
 fi
 
-while [ $POS -le $LAST ]; do
+POS=0
+LAST=${#1}
+LEN=${#1}
+fixprefix=0
+thatmuch=3
+ppos=0
+
+while [ $POS -lt $LAST ]; do
 	FSEL=$(($LEN % 3))
 	case $FSEL in
 		1)
 			FunctionPointer=OneToNine
 			;;
 		2)
-			if [ ${1:$(($POS+1)):1} -eq 0 ]; then
+			if [ ${1:$(($POS + 1)):1} -eq 0 ]; then
 				FunctionPointer=Tens
 			elif [ ${1:$(($POS)):1} -eq 1 ]; then
 				FunctionPointer=TeenTens
 				POS=$(($POS + 1))
+				LEN=$(($LEN - 1))
+				fixprefix=1
 			else
 				FunctionPointer=LongTens
 			fi
 			;;
 		0)
-			FunctionPointer=Hundreds
+			if [ 1 -le $LEN ]; then
+				FunctionPointer=Hundreds
+			else
+				FunctionPointer=OneToNine
+			fi
 			;;
 	esac
-	$FunctionPointer ${1:$POS:1}
-	if [ $FSEL -eq 1 -a $POS -ge 0 ]; then
-		Prefixes $(($LEN))
+	$FunctionPointer ${1:$POS:1} || true
+	if [ $FSEL -eq 1 ] || [ $fixprefix -eq 1 ]; then
+		rewindPos $POS $LEN
+		Prefixes $LEN ${1:$ppos:$thatmuch}
+		fixprefix=0
+		thatmuch=3
 	fi
 	POS=$(($POS + 1))
 	LEN=$(($LEN - 1))
