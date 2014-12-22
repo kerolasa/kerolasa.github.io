@@ -15,12 +15,12 @@ Prefixes() {
 		return
 	fi
 	case $1 in
-		4)  printf " thousand ";;
-		7)  printf " million ";;
-		10) printf " billion ";;
-		13) printf " trillion ";;
-		16) printf " quadrillion ";;
-		19) printf " quintillion ";;
+		4)  printf "thousand ";;
+		7)  printf "million ";;
+		10) printf "billion ";;
+		13) printf "trillion ";;
+		16) printf "quadrillion ";;
+		19) printf "quintillion ";;
 	esac
 }
 
@@ -126,6 +126,7 @@ printOneNumber() {
 	fixprefix=0
 	thatmuch=3
 	ppos=0
+	hundredspace=1
 	while [ $POS -lt $LAST ]; do
 		FSEL=$(($LEN % 3))
 		case $FSEL in
@@ -147,6 +148,7 @@ printOneNumber() {
 			0)
 				if [ 1 -le $LEN ]; then
 					FunctionPointer=Hundreds
+					hundredspace=0
 				else
 					FunctionPointer=OneToNine
 				fi
@@ -155,9 +157,13 @@ printOneNumber() {
 		$FunctionPointer ${1:$POS:1} || true
 		if [ $FSEL -eq 1 ] || [ $fixprefix -eq 1 ]; then
 			rewindPos $POS $LEN
+			if [ $hundredspace -eq 1 ]; then
+				printf " "
+			fi
 			Prefixes $LEN ${1:$ppos:$thatmuch}
 			fixprefix=0
 			thatmuch=3
+			hundredspace=1
 		fi
 		POS=$(($POS + 1))
 		LEN=$(($LEN - 1))
