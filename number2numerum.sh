@@ -101,67 +101,71 @@ rewindPos() {
 	ppos=$(($1 - 2))
 }
 
-if [ $# -ne 1 ]; then
-	echo "usage: $0 <digit>" >> /dev/stderr
-	exit 1
-fi
-
-case $1 in
-	*[!0-9]*)
-		echo "$0: $1: is not a number" >> /dev/stderr
-		exit 1
-		;;
-esac
-
-if [ $1 -eq 0 ]; then
-	echo zero
-	exit 0
-fi
-
-POS=0
-LAST=${#1}
-LEN=${#1}
-fixprefix=0
-thatmuch=3
-ppos=0
-
-while [ $POS -lt $LAST ]; do
-	FSEL=$(($LEN % 3))
-	case $FSEL in
-		1)
-			FunctionPointer=OneToNine
-			;;
-		2)
-			if [ ${1:$(($POS + 1)):1} -eq 0 ]; then
-				FunctionPointer=Tens
-			elif [ ${1:$(($POS)):1} -eq 1 ]; then
-				FunctionPointer=TeenTens
-				POS=$(($POS + 1))
-				LEN=$(($LEN - 1))
-				fixprefix=1
-			else
-				FunctionPointer=LongTens
-			fi
-			;;
-		0)
-			if [ 1 -le $LEN ]; then
-				FunctionPointer=Hundreds
-			else
-				FunctionPointer=OneToNine
-			fi
+printOneNumber() {
+	case $1 in
+		*[!0-9]*)
+			echo "$0: $1: is not a number" >> /dev/stderr
+			return
 			;;
 	esac
-	$FunctionPointer ${1:$POS:1} || true
-	if [ $FSEL -eq 1 ] || [ $fixprefix -eq 1 ]; then
-		rewindPos $POS $LEN
-		Prefixes $LEN ${1:$ppos:$thatmuch}
-		fixprefix=0
-		thatmuch=3
+	if [ $1 -eq 0 ]; then
+		echo zero
+		return
 	fi
-	POS=$(($POS + 1))
-	LEN=$(($LEN - 1))
-done
+	POS=0
+	LAST=${#1}
+	LEN=${#1}
+	fixprefix=0
+	thatmuch=3
+	ppos=0
+	while [ $POS -lt $LAST ]; do
+		FSEL=$(($LEN % 3))
+		case $FSEL in
+			1)
+				FunctionPointer=OneToNine
+				;;
+			2)
+				if [ ${1:$(($POS + 1)):1} -eq 0 ]; then
+					FunctionPointer=Tens
+				elif [ ${1:$(($POS)):1} -eq 1 ]; then
+					FunctionPointer=TeenTens
+					POS=$(($POS + 1))
+					LEN=$(($LEN - 1))
+					fixprefix=1
+				else
+					FunctionPointer=LongTens
+				fi
+				;;
+			0)
+				if [ 1 -le $LEN ]; then
+					FunctionPointer=Hundreds
+				else
+					FunctionPointer=OneToNine
+				fi
+				;;
+		esac
+		$FunctionPointer ${1:$POS:1} || true
+		if [ $FSEL -eq 1 ] || [ $fixprefix -eq 1 ]; then
+			rewindPos $POS $LEN
+			Prefixes $LEN ${1:$ppos:$thatmuch}
+			fixprefix=0
+			thatmuch=3
+		fi
+		POS=$(($POS + 1))
+		LEN=$(($LEN - 1))
+	done
+	printf "\n"
+}
 
-printf "\n"
+if [ $# -eq 0 ]; then
+	for n in $(cat); do
+		printOneNumber $n
+	done
+else
+	for n in $*; do
+		printOneNumber $n
+	done
+fi
+
 exit 0
 # EOF
