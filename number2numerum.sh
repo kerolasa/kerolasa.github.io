@@ -8,6 +8,7 @@ SCRIPT_INVOCATION_SHORT_NAME="${0##*/}"
 set -e
 trap 'echo "$SCRIPT_INVOCATION_SHORT_NAME: exit on error in line $LINENO"; exit 1' ERR
 set -u
+shopt -s extglob
 
 Prefixes() {
 	if [ $2 -eq 0 ]; then
@@ -102,9 +103,11 @@ rewindPos() {
 }
 
 printOneNumber() {
-	case $1 in
-		*[!0-9]*)
-			echo "$0: $1: is not a number" >> /dev/stderr
+	case "$1" in
+		@(-|)[0-9]*([0-9]))
+			;;
+		*)
+			echo "$SCRIPT_INVOCATION_SHORT_NAME: $1: is not a number" >> /dev/stderr
 			return
 			;;
 	esac
@@ -115,6 +118,11 @@ printOneNumber() {
 	POS=0
 	LAST=${#1}
 	LEN=${#1}
+	if [ ${1:0:1} = '-' ]; then
+		printf "minus "
+		POS=1
+		LEN=$(($LEN - 1))
+	fi
 	fixprefix=0
 	thatmuch=3
 	ppos=0
