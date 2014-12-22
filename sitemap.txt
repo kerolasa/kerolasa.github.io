@@ -6,7 +6,7 @@ http://kerolasa.github.io/defunct.html
 http://kerolasa.github.io/differences.html
 http://kerolasa.github.io/dotcommand.html
 http://kerolasa.github.io/falafel.html
-http://kerolasa.github.io/falafel.txt
+http://kerolasa.github.io/falafel-en.html
 http://kerolasa.github.io/filetimes.html
 http://kerolasa.github.io/lasagna.html
 http://kerolasa.github.io/lettu.html
