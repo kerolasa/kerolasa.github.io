@@ -23,10 +23,12 @@
 <title>He's a logger(1), and he's okay</title>
 </head>
 <body>
+<section itemscope itemtype="http://schema.org/SoftwareApplication">
 <h1>He's a logger(1), and he's okay</h1>
 <p class="justtext">The <a href=
-"https://github.com/karelzak/util-linux/blob/master/misc-utils/logger.c">
-logger(1)</a> command has been around for quite a while. Hopefully
+"https://github.com/karelzak/util-linux/blob/master/misc-utils/logger.c"
+itemprop="name">
+logger</a>(1) command has been around for quite a while. Hopefully
 by now people are preferring logger when sending messages to syslog
 instead of creating random log files all over system. While the
 basic idea of logger has not been changed, in the last few months
@@ -34,7 +36,8 @@ the command has got couple of new features.</p>
 <h2>journald support</h2>
 <p class="justtext">It is now possible to send structured messages
 to <a href=
-"http://0pointer.de/blog/projects/journalctl.html">journald</a>
+"http://0pointer.de/blog/projects/journalctl.html"
+itemprop="keywords">journald</a>
 that is a system facility. A journal entry can multiple fields that
 look a lot like key value pairs. Here is a simple example of a
 journal entry.</p>
@@ -51,13 +54,13 @@ $ journalctl --output=json-pretty DOGS=bark
 <p class="justtext">The point of journal support is to allow
 structured data to be logged. This will permit easy finding,
 grouping, and analysis of messages. In journal entries
-<b>MESSAGE_ID</b> field is recommended as it is an excellent key to
+<b itemprop="keywords">MESSAGE_ID</b> field is recommended as it is an excellent key to
 group or differentiate messages.</p>
 <p class="justtext">See also manual pages <a href=
-"http://man7.org/linux/man-pages/man1/journalctl.1.html">journalctl(1)</a>
+"http://man7.org/linux/man-pages/man1/journalctl.1.html">journalctl</a>(1)
 and <a href=
 "http://man7.org/linux/man-pages/man7/systemd.journal-fields.7.html">
-systemd.journal-fields(7)</a> before taking the logger
+systemd.journal-fields</a>(7) before taking the logger
 <b>--journald</b> in use.</p>
 <h2>Identifiers</h2>
 <p class="justtext">In cases in which syslog messages need to be
@@ -78,7 +81,8 @@ messages when sent from a single script session. This makes the
 streams of messages trivial.</p>
 <h2>RFC5424 syslog protocol is the new default</h2>
 <p class="justtext">The logger has used <a href=
-"http://tools.ietf.org/html/rfc3164">RFC3164</a> protocol to log
+"http://tools.ietf.org/html/rfc3164"
+itemprop="mentions">RFC3164</a> protocol to log
 remotely for a long time. The old protocol does not fully support
 the qualified hostname field in the syslog message header, and in
 some cases the stamp is not accurate. The new protocol sends
@@ -92,24 +96,25 @@ source address where the communication came from.</p>
 <p class="justtext">The number in the front of the second time
 stamp is the priority and it is untouched. After it comes the time
 stamp that tells when the message was sent using <a href=
-"http://en.wikipedia.org/wiki/ISO_8601#Dates">ISO-8601</a> format.
+"http://en.wikipedia.org/wiki/ISO_8601#Dates" itemprop="mentions">ISO-8601</a> format.
 The message has the maximum accuracy of <a href=
 "http://tools.ietf.org/html/rfc5424">RFC5424</a>. The hostname will
 be exactly the same than what the <a href=
-"http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>
+"http://man7.org/linux/man-pages/man2/gethostname.2.html"
+itemprop="keywords">gethostname</a>(2)
 function returns. The <b>tag</b> field is what it has always been -
 followed by RFC defined separator hyphen.</p>
-<p class="justtext">The <b>timeQuality</b> is structured data in
-<a href="http://tools.ietf.org/html/rfc5424">RFC5424</a> terms. The
-field <b>tzKnown</b> tells if the time zone in client side time
+<p class="justtext">The <b itemprop="keywords">timeQuality</b> is structured data in
+<a href="http://tools.ietf.org/html/rfc5424" itemprop="mentions">RFC5424</a> terms. The
+field <b >tzKnown</b> tells if the time zone in client side time
 stamp is known. This is assumed to be true in a linux system. If
-the clock is synchronized with ntp the <b>isSynced</b> is 1. When
+the clock is synchronized with ntp the <b itemprop="keywords">isSynced</b> is 1. When
 the clock is not synchronized with ntp the the <b>isSynced</b> is
-0. The <b>syncAccuracy</b> informs maximum value how much the time
+0. The <b itemprop="keywords">syncAccuracy</b> informs maximum value how much the time
 stamp might be off in milliseconds.</p>
 <p class="justtext">All three new fields, the client side time
 stamp, the hostname, and the time quality, can be switched off by
-using <b>--rfc5424=notime,nohost,notq</b> option arguments. For
+using <b itemprop="keywords">--rfc5424=notime,nohost,notq</b> option arguments. For
 users who prefer the old protocol there is <b>--rfc3164</b>
 option.</p>
 <h2>RFC3164 protocol improvement</h2>
@@ -117,7 +122,7 @@ option.</p>
 "http://tools.ietf.org/html/rfc3164">RFC3164</a> implementations
 has added the hostname to the syslog header. The standard dictates
 that the hostname must be in a short format. If the <a href=
-"http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname(2)</a>
+"http://man7.org/linux/man-pages/man2/gethostname.2.html">gethostname</a>(2)
 returns a fully qualified name, such as a hostname.example.com, the
 domain is cut out from the first dot leaving only the hostname in
 place.</p>
@@ -128,7 +133,19 @@ format.</p>
 &lt;5&gt;Aug 9 09:56:36 hostname tag[2502]: message test here
 </pre>
 <h2>Notes</h2>
-<p class="justtext">This page was updated
-2014-08-20T15:17:27+0300</p>
+<p class="justtext">This page was published
+<span itemprop="datePublished">2014-08-20T15:17:27+0300</span>
+and most recent update is from
+<span itemprop="dateModified">2014-12-24T00:04:34+0000</span>
+</p>
+<div style="visibility:hidden">
+<span itemprop="applicationCategory">User Commands</span>
+<span itemprop="applicationSubCategory">logging tools</span>
+<span itemprop="applicationSuite">util-linux</span>
+<span itemprop="about">logger(1) systemd journald support and rfc5424 protocols explained</span>
+<span itemprop="author">Sami Kerola</span>
+<span itemprop="genre">blog post</span>
+</div>
+</section>
 </body>
 </html>
