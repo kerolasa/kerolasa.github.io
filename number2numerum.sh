@@ -15,12 +15,25 @@ Prefixes() {
 		return
 	fi
 	case "$1" in
-		4)  printf "thousand ";;
-		7)  printf "million ";;
-		10) printf "billion ";;
-		13) printf "trillion ";;
-		16) printf "quadrillion ";;
-		19) printf "quintillion ";;
+		4)  printf " thousand ";;
+		7)  printf " million ";;
+		10) printf " billion ";;
+		13) printf " trillion ";;
+		16) printf " quadrillion ";;
+		19) printf " quintillion ";;
+		22) printf " sextillion ";;
+		25) printf " septillion ";;
+		28) printf " octillion ";;
+		31) printf " nonillion ";;
+		34) printf " decillion ";;
+		37) printf " undecillion ";;
+		40) printf " duodecillion ";;
+		43) printf " tredecillion ";;
+		46) printf " quattuordecillion ";;
+		49) printf " quindecillion ";;
+		52) printf " sexdecillion ";;
+		55) printf " septendecillion ";;
+		58) printf " octodecillion ";;
 	esac
 }
 
@@ -101,6 +114,9 @@ rewindPos() {
 
 printOneNumber() {
 	case "$1" in
+		@(-|)0*(0))
+			printf 'zero'
+			;;
 		@(-|)[0-9]*([0-9]))
 			;;
 		*)
@@ -108,10 +124,6 @@ printOneNumber() {
 			return
 			;;
 	esac
-	if [ "$1" -eq 0 ]; then
-		echo zero
-		return
-	fi
 	POS=0
 	LAST="${#1}"
 	LEN="${#1}"
@@ -119,6 +131,10 @@ printOneNumber() {
 		printf "minus "
 		POS=1
 		LEN=$((LEN - 1))
+	fi
+	if [ 61 -lt "$LEN" ]; then
+		echo "$1: too large number"
+		return
 	fi
 	fixprefix=0
 	thatmuch=3
