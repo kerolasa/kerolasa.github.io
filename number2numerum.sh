@@ -11,10 +11,10 @@ set -u
 shopt -s extglob
 
 Prefixes() {
-	if [ $2 -eq 0 ]; then
+	if [ "$2" -eq 0 ]; then
 		return
 	fi
-	case $1 in
+	case "$1" in
 		4)  printf "thousand ";;
 		7)  printf "million ";;
 		10) printf "billion ";;
@@ -25,12 +25,12 @@ Prefixes() {
 }
 
 Hundreds() {
-	OneToNine $1 &&
+	OneToNine "$1" &&
 	printf " hundred "
 }
 
 TeenTens() {
-	case $1 in
+	case "$1" in
 		1)  printf "eleven";;
 		2)  printf "twelve";;
 		3)  printf "thirteen";;
@@ -46,32 +46,29 @@ TeenTens() {
 }
 
 Tens() {
-	case $1 in
+	case "$1" in
 		1)  printf "ten";;
 		2)  printf "twenty ";;
 		3)  printf "thirty";;
 		5)  printf "fifty";;
 		8)  printf "eighty";;
 		0)  ;;
-		?)  OneToNine $1 && printf "ty ";;
+		?)  OneToNine "$1" && printf "ty ";;
 	esac
 }
 
 LongTens() {
-	case $1 in
-		2)  printf "twen";;
-		3)  printf "thir";;
-		5)  printf "fif";;
-		8)  printf "eigh";;
-		?)  OneToNine $1;;
+	case "$1" in
+		2)  printf "twenty ";;
+		3)  printf "thirty ";;
+		5)  printf "fifty ";;
+		8)  printf "eighty ";;
+		?)  OneToNine "$1" && printf "ty ";;
 	esac
-	if [ $? -eq 0 ]; then
-		printf "ty "
-	fi
 }
 
 OneToNine() {
-	case $1 in
+	case "$1" in
 		1)  printf "one";;
 		2)  printf "two";;
 		3)  printf "three";;
@@ -87,7 +84,7 @@ OneToNine() {
 }
 
 rewindPos() {
-	case $1 in
+	case "$1" in
 		0)
 			thatmuch=1
 			ppos=0
@@ -99,7 +96,7 @@ rewindPos() {
 			return
 			;;
 	esac
-	ppos=$(($1 - 2))
+	ppos=$(("$1" - 2))
 }
 
 printOneNumber() {
@@ -107,46 +104,46 @@ printOneNumber() {
 		@(-|)[0-9]*([0-9]))
 			;;
 		*)
-			echo "$SCRIPT_INVOCATION_SHORT_NAME: $1: is not a number" >> /dev/stderr
+			echo "$SCRIPT_INVOCATION_SHORT_NAME: $1: is not a number" >&2
 			return
 			;;
 	esac
-	if [ $1 -eq 0 ]; then
+	if [ "$1" -eq 0 ]; then
 		echo zero
 		return
 	fi
 	POS=0
-	LAST=${#1}
-	LEN=${#1}
-	if [ ${1:0:1} = '-' ]; then
+	LAST="${#1}"
+	LEN="${#1}"
+	if [ "${1:0:1}" = '-' ]; then
 		printf "minus "
 		POS=1
-		LEN=$(($LEN - 1))
+		LEN=$((LEN - 1))
 	fi
 	fixprefix=0
 	thatmuch=3
 	ppos=0
 	hundredspace=1
-	while [ $POS -lt $LAST ]; do
-		FSEL=$(($LEN % 3))
-		case $FSEL in
+	while [ "$POS" -lt "$LAST" ]; do
+		FSEL=$((LEN % 3))
+		case "$FSEL" in
 			1)
 				FunctionPointer=OneToNine
 				;;
 			2)
-				if [ ${1:$(($POS + 1)):1} -eq 0 ]; then
+				if [ "${1:$((POS + 1)):1}" -eq 0 ]; then
 					FunctionPointer=Tens
-				elif [ ${1:$(($POS)):1} -eq 1 ]; then
+				elif [ "${1:$((POS)):1}" -eq 1 ]; then
 					FunctionPointer=TeenTens
-					POS=$(($POS + 1))
-					LEN=$(($LEN - 1))
+					POS=$((POS + 1))
+					LEN=$((LEN - 1))
 					fixprefix=1
 				else
 					FunctionPointer=LongTens
 				fi
 				;;
 			0)
-				if [ 1 -le $LEN ]; then
+				if [ 1 -le "$LEN" ]; then
 					FunctionPointer=Hundreds
 					hundredspace=0
 				else
@@ -154,30 +151,30 @@ printOneNumber() {
 				fi
 				;;
 		esac
-		$FunctionPointer ${1:$POS:1} || true
-		if [ $FSEL -eq 1 ] || [ $fixprefix -eq 1 ]; then
-			rewindPos $POS $LEN
-			if [ $hundredspace -eq 1 ]; then
+		$FunctionPointer "${1:$POS:1}" || true
+		if [ "$FSEL" -eq 1 ] || [ "$fixprefix" -eq 1 ]; then
+			rewindPos "$POS" "$LEN"
+			if [ "$hundredspace" -eq 1 ]; then
 				printf " "
 			fi
-			Prefixes $LEN ${1:$ppos:$thatmuch}
+			Prefixes "$LEN" "${1:$ppos:$thatmuch}"
 			fixprefix=0
 			thatmuch=3
 			hundredspace=1
 		fi
-		POS=$(($POS + 1))
-		LEN=$(($LEN - 1))
+		POS="$((POS + 1))"
+		LEN="$((LEN - 1))"
 	done
 	printf "\n"
 }
 
 if [ $# -eq 0 ]; then
-	for n in $(cat); do
-		printOneNumber $n
+	while read -r n; do
+		printOneNumber "$n"
 	done
 else
-	for n in $*; do
-		printOneNumber $n
+	for n in "$@"; do
+		printOneNumber "$n"
 	done
 fi
 
