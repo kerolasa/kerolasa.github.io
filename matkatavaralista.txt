@@ -1,68 +1,70 @@
 Matkalaukkuun
 -------------
-o Housuja							todo
-o Kalsareja							todo
-o Kravaatti							todo
-o Paitoja							todo
-o Puku								todo
-o Puvuntakin rintataskuun nenäliina				todo
-o Sukkia							todo
-o Toiset kengät, tai sandaalit					todo
+o Housuja
+o Kalsareja
+o Kravaatti
+o Paitoja
+o Puku
+o Puvuntakin rintataskuun nenaliina
+o Sukkia
+o Toiset kengat, tai sandaalit
 
-o Aftershave							todo
-o Dödörantti							todo
-o Hammasharja							todo
-o Hammastahnaa							todo
-o Kynsisakset							todo
-o Partateria							todo
-o Pyykkipussi							todo
-o Shavette							todo
+o Aftershave
+o Dodorantti
+o Hammasharja
+o Hammastahnaa
+o Kynsisakset
+o Partateria
+o Pyykkipussi
+o Shavette
 
-o Kännykänlaturi						todo
-o Tietokoneenlaturi						todo
-o Töpselikonvertteri						todo
+o Kannykanlaturi
+o Tietokoneenlaturi
+o Topselikonvertteri
 
-o Kamera							todo
-o Pankkitunnistuskone						todo
-o Pieni pyyhe							todo
-o Sateenvarjo							todo
+o Kamera
+o Pankkitunnistuskone
+o Pieni pyyhe
+o Sateenvarjo
 
-o Tarkista laukun osoitelappu					todo
+o Tarkista laukun osoitelappu
 
-Käsimatkatavarat
+Kasimatkatavarat
 ----------------
-o Aikataulu, agenda, tms					todo
-o Avaimet							todo
-o Hotellivaraus, tarkista osoite				todo
-o Kampa								todo
-o Korvatulpat							todo
-o Kyniä								todo
-o Lentolippu							todo
-o Lukemista							todo
-o Paperia							todo
-o Passi								todo
-o Puhelin							todo
-o TfL-kortti							todo
-o Tietokone							todo
+o Aikataulu, agenda, tms
+o Avaimet
+o Hotellivaraus, tarkista osoite
+o Kampa
+o Korvatulpat
+o Kynia
+o Lentolippu
+o Lukemista
+o Paperia
+o Passi
+o Puhelin
+o TfL-kortti
+o Tietokone
 
-o Lompakko							todo
- + Maksukortit							todo
- + Kohdemaan valuuttaa						todo
- + OP-lappu							todo
- + Vakuutuslappu						todo
+o Lompakko
+ + Maksukortit
+ + Kohdemaan valuuttaa
+ + OP-lappu
+ + Vakuutuslappu
 
 Muista poistaa:
-o Kaikenlaist terät, kuten sakset				todo
-o Roskat lompakosta, mukaanlukien kolikot			todo
-o Töissä tarvittavat kulkukortit yms				todo
+o Kaikenlaist terat, kuten sakset
+o Roskat lompakosta, mukaanlukien kolikot
+o Toissa tarvittavat kulkukortit yms
 
-Päälle
+o Laita kello herattamaan oikeaan aikaan
+
+Paalle
 ------
 o Housut
 o Kalsarit
-o Kengät
+o Kengat
 o Paita
-o Päähine
+o Paahine
 o Sukat
 o Takki
-o Vyö
+o Vyo
