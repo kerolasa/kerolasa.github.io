@@ -1,7 +1,6 @@
 http://kerolasa.github.io/
 http://kerolasa.github.io/HOWTO-Basic-Debugging.html
 http://kerolasa.github.io/amsterdam_pubs.html
-http://kerolasa.github.io/cv.pdf
 http://kerolasa.github.io/defunct.html
 http://kerolasa.github.io/differences.html
 http://kerolasa.github.io/dotcommand.html
@@ -18,9 +17,11 @@ http://kerolasa.github.io/matka2003.html
 http://kerolasa.github.io/matka2004/index.html
 http://kerolasa.github.io/matkatavaralista.txt
 http://kerolasa.github.io/matti.html
+http://kerolasa.github.io/measurements.html
 http://kerolasa.github.io/number2numerum.sh
 http://kerolasa.github.io/second.html
 http://kerolasa.github.io/stat.c
+http://kerolasa.github.io/tea.html
 http://kerolasa.github.io/thaimaa.html
 http://kerolasa.github.io/was/index.html
 http://kerolasa.github.io/was/juxto.sh
