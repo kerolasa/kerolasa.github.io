@@ -1,46 +1,27 @@
-<?xml version="1.0" encoding="us-ascii"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type"
-              content="text/html; charset=us-ascii" />
-        <meta name="author"
-              content="Sami Kerola" />
-        <meta name="classification"
-              content="personal home page" />
-        <meta name="contact_addr"
-              content="kerolasa@iki.fi" />
-        <meta name="copyright"
-              content="Copyright (C)2003 Sami Kerola" />
-        <meta name="description"
-              content="file system timestamps atime, ctime and mtime
-              explained" />
-        <meta name="distribution"
-              content="global" />
-        <meta name="abstract"
-              content="file system timestamps atime, ctime and mtime
-              explained" />
-        <meta name="keywords"
-              content="file, times" />
-        <meta name="language"
-              content="en" />
-        <meta name="owner"
-              content="Sami Kerola" />
-        <meta name="rating"
-              content="general" />
-        <meta name="revisit-after"
-              content="15" />
-        <meta name="robots"
-              content="index, follow" />
-        <link type="text/css"
-              rel="stylesheet"
-              href="kerolasa.css" />
-        <title>
-            What are atime, ctime and mtime?
-        </title>
-<style xml:space="preserve"
-       type="text/css">
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="author" content="Sami Kerola">
+<meta name="classification" content="personal home page">
+<meta name="contact_addr" content="kerolasa@iki.fi">
+<meta name="copyright" content="Copyright (C)2003 Sami Kerola">
+<meta name="description" content=
+"file system timestamps atime, ctime and mtime explained">
+<meta name="distribution" content="global">
+<meta name="abstract" content=
+"file system timestamps atime, ctime and mtime explained">
+<meta name="keywords" content="file, times">
+<meta name="language" content="en">
+<meta name="owner" content="Sami Kerola">
+<meta name="rating" content="general">
+<meta name="revisit-after" content="15">
+<meta name="robots" content="index, follow">
+<link type="text/css" rel="stylesheet" href="kerolasa.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What are atime, ctime and mtime?</title>
+
+<style xml:space="preserve" type="text/css">
 /*<![CDATA[*/
 BODY {
    max-width: 700px;
@@ -48,57 +29,32 @@ BODY {
 
 /*]]>*/
 </style>
-    </head>
-    <body>
-        <h3>
-            What are atime, ctime and mtime?
-        </h3>
-        <p>
-            Files, directories, fifos, sockets and device files
-            (later on refered as files) has three different time
-            values. Normally no-one is interested of these time
-            values, but when something strange happens people tend
-            look up when something happened and then you need to
-            understand what are these times.
-        </p>
-        <p>
-            <b>ctime.</b> Many times this is understood as a
-            creation time but that wrong. Ctime is change time of
-            file stats such as ownership, what permissions it has
-            etc.
-        </p>
-        <p>
-            <b>mtime.</b> File modification time. Value of mtime is
-            updated when content of file changes.
-        </p>
-        <p>
-            <b>atime.</b> File access time. Value of atime is
-            modified when file is opened.
-        </p>
-        <p>
-            As said above no-one is interested of these file times.
-            all thou you can catch possible system cracker by
-            checking file mtime and ctimes of binaries and
-            important files. If you are unlucky system cracker
-            knows how to use touch and time values are same as they
-            where before. Then you need real file integrity checker
-            to catch intruder.
-        </p>
-        <p>
-            All three time values are implemented in normal file
-            systems, but if you mount some exotic file system you
-            cannot be sure that they all present, see your
-            documentation for more info about this. Note that there
-            are file systems that you can mount so that atime will
-            not ever get modified. With this file system feature
-            you can gain better performance in some situations. See
-            your documentations does your file system has this
-            feature.
-        </p>
-        <p>
-            With this file statistics program <a href=
-            "stat.c">stat.c</a>
-            you can check time values and other things about files.
-        </p>
-    </body>
+</head>
+<body>
+<h3>What are atime, ctime and mtime?</h3>
+<p>Files, directories, fifos, sockets and device files (later on refered as
+files) has three different time values. Normally no-one is interested of these
+time values, but when something strange happens people tend look up when
+something happened and then you need to understand what are these times.</p>
+<p><b>ctime.</b> Many times this is understood as a creation time but that
+wrong. Ctime is change time of file stats such as ownership, what permissions
+it has etc.</p>
+<p><b>mtime.</b> File modification time. Value of mtime is updated when content
+of file changes.</p>
+<p><b>atime.</b> File access time. Value of atime is modified when file is
+opened.</p>
+<p>As said above no-one is interested of these file times. all thou you can
+catch possible system cracker by checking file mtime and ctimes of binaries and
+important files. If you are unlucky system cracker knows how to use touch and
+time values are same as they where before. Then you need real file integrity
+checker to catch intruder.</p>
+<p>All three time values are implemented in normal file systems, but if you
+mount some exotic file system you cannot be sure that they all present, see
+your documentation for more info about this. Note that there are file systems
+that you can mount so that atime will not ever get modified. With this file
+system feature you can gain better performance in some situations. See your
+documentations does your file system has this feature.</p>
+<p>With this file statistics program <a href="stat.c">stat.c</a> you can check
+time values and other things about files.</p>
+</body>
 </html>

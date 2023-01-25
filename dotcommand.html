@@ -1,49 +1,43 @@
-<?xml version="1.0" encoding="us-ascii"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type"
-        content="text/html; charset=iso-8859-1" />
-        <meta name="author" content="Sami Kerola" />
-        <meta name="classification" content="personal home page" />
-        <meta name="contact_addr" content="kerolasa@iki.fi" />
-        <meta name="copyright" content="Copyright (C)2003 Sami Kerola" />
-        <meta name="description"
-        content="What difference dot command and executable scripts has" />
-        <meta name="distribution" content="global" />
-        <meta name="abstract"
-        content="Anagrams of What difference dot command and executable scripts has" />
-        <meta name="keywords"
-        content="executable, dot, command, shell, sami, matias, kerola" />
-        <meta name="language" content="en" />
-        <meta name="owner" content="Sami Kerola" />
-        <meta name="rating" content="general" />
-        <meta name="revisit-after" content="15" />
-        <meta name="robots" content="index, follow" />
-        <link type="text/css" rel="stylesheet" href="kerolasa.css" />
-        <title>What difference dot command and executable scripts
-        has?</title>
-    </head>
-    <body>
-        <h2>What difference dot command and executable scripts has</h2>
-        <p>There is two different ways to execute scripts. First one is
-        to execute it as a executable that contains interpreter. Second
-        one is dot command which is interpreded by shell that executes
-        script file.</p>
-        <p>Executable that has an interpreter has on first line
-        #!/path/to/interperter. Dot command may or may not have #!
-        markup.</p>
-        <p>Demonstratie example. 
-        <br />-- snip 
-        <br />#!/bin/echo foo 
-        <br />echo bar 
-        <br />-- snap</p>
-        <p>Copy script above to file script.sh and give executable bit on
-        it by comman chmod 755 script.sh. First run script like this
-        &quot;./script.sh&quot; and try then &quot;. script.sh&quot;
-        Rerun script both ways until you understand what interpreter line
-        does and how. Ps, dot command sees first line as a comment if you
-        wonder the outputs.</p>
-    </body>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="author" content="Sami Kerola">
+<meta name="classification" content="personal home page">
+<meta name="contact_addr" content="kerolasa@iki.fi">
+<meta name="copyright" content="Copyright (C)2003 Sami Kerola">
+<meta name="description" content=
+"What difference dot command and executable scripts has">
+<meta name="distribution" content="global">
+<meta name="abstract" content=
+"Anagrams of What difference dot command and executable scripts has">
+<meta name="keywords" content=
+"executable, dot, command, shell, sami, matias, kerola">
+<meta name="language" content="en">
+<meta name="owner" content="Sami Kerola">
+<meta name="rating" content="general">
+<meta name="revisit-after" content="15">
+<meta name="robots" content="index, follow">
+<link type="text/css" rel="stylesheet" href="kerolasa.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What difference dot command and executable scripts has?</title>
+</head>
+<body>
+<h2>What difference dot command and executable scripts has</h2>
+<p>There is two different ways to execute scripts. First one is to execute it
+as a executable that contains interpreter. Second one is dot command which is
+interpreded by shell that executes script file.</p>
+<p>Executable that has an interpreter has on first line #!/path/to/interperter.
+Dot command may or may not have #! markup.</p>
+<p>Demonstratie example.<br>
+-- snip<br>
+#!/bin/echo foo<br>
+echo bar<br>
+-- snap</p>
+<p>Copy script above to file script.sh and give executable bit on it by comman
+chmod 755 script.sh. First run script like this "./script.sh" and try then ".
+script.sh" Rerun script both ways until you understand what interpreter line
+does and how. Ps, dot command sees first line as a comment if you wonder the
+outputs.</p>
+</body>
 </html>
