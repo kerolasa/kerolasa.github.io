@@ -1,38 +1,4 @@
-BODY {
-max-width:700px;
-font-size: 16px;
-}
-A {
-background: transparent;
-text-decoration: none;
-}
-P.justtext {
-float: none;
-font-size: medium;
-margin-left: 20px;
-max-width:700px;
-}
-DIV.justtext {
-float: none;
-font-size: medium;
-margin-left: 20px;
-max-width:700px;
-}
-P.address {
-float: none;
-font-size: medium;
-margin-left: 45px;
-max-width:700px;
-}
-TABLE {
-float: none;
-font-size: medium;
-}
-P.where {
-float: none;
-font-size: medium;
-font-weight: bold;
-}
-TD.pad {
-text-indent: 5px;
-}
+BODY{max-width:720px;font-size: 16px}
+A{text-decoration: none}
+P.j{margin-left:32px;max-width:720px}
+PRE.j {margin-left:32px;max-width:720px}

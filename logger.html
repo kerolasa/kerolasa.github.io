@@ -41,13 +41,13 @@ that is a system facility. A journal entry can multiple fields that
 look a lot like key value pairs. Here is a simple example of a
 journal entry.</p>
 <p class="justtext"></p>
-<pre>
+<pre class="justtext">
 $ echo 'MESSAGE_ID=86184c3b1aa444f58ebe7b30fec1438b DOGS=bark CARAVAN=goes on' | logger --journald
 </pre>
 <p class="justtext">Assuming above example was logged one should
 find the message with.</p>
 <p class="justtext"></p>
-<pre>
+<pre class="justtext">
 $ journalctl --output=json-pretty DOGS=bark
 </pre>
 <p class="justtext">The point of journal support is to allow
@@ -86,7 +86,7 @@ remotely for a long time. The old protocol does not fully support
 the qualified hostname field in the syslog message header, and in
 some cases the stamp is not accurate. The new protocol sends
 messages that will look like this</p>
-<pre>
+<pre class="justtext">
 Aug 9 09:56:36 192.168.1.10 1 2014-08-09T09:56:36,346136+0100 hostname.example.com tag - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="362834"] message test here
 </pre>
 <p class="justtext">The first time stamp tells when the syslog
@@ -128,7 +128,7 @@ place.</p>
 <p class="justtext">An example of a <a href=
 "http://tools.ietf.org/html/rfc3164">RFC3164</a> messages
 format.</p>
-<pre>
+<pre class="justtext">
 &lt;5&gt;Aug 9 09:56:36 hostname tag[2502]: message test here
 </pre>
 <h2>Notes</h2>
