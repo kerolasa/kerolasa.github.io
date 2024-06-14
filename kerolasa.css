@@ -1,5 +1,5 @@
-BODY{max-width:720px;font-size: 16px}
+BODY{max-width:50em;font-size: 1.6em}
 A{text-decoration: none}
-H1{font-size:16px;font-weight: bold}
-P.j{margin-left:32px;max-width:720px}
-PRE.j {margin-left:32px;max-width:720px}
+H1{font-size:1.6em;font-weight: bold}
+P.j{margin-left:1ee;max-width:50em}
+PRE.j {margin-left:1em;max-width:50em}
