@@ -1,14 +1,18 @@
 BEGIN:VCARD
-VERSION:3.0
-REV:2026-07-17T22:00:00Z
+VERSION:4.0
+SOURCE:https://kerolasa.iki.fi/contact.vcf
+UID:urn:uuid:f4e2161e-ccf4-555d-8cf6-490446869515
+REV:20260721T143554Z
 N:Kerola;Sami;;Mr;
+FN:Sami Kerola
 TITLE:Linux programmer and system admin
-TEL;CELL:+447761367138
-EMAIL;INTERNET;HOME:kerolasa@iki.fi
-EMAIL;INTERNET;OTHER:kerolasa@gmail.com
-URL;HOME:https://kerolasa.iki.fi/
-URL;TYPE=linkedin:https://www.linkedin.com/in/kerolasa/
-URL;TYPE=github:https://github.com/kerolasa/
-URL;TYPE=whatsapp:https://wa.me/kerolasa
-URL;TYPE=signal:https://signal.me/#eu/P9xAT-l9DPR97eR8O9ca2rqcTb5mColdvzoYVZGN0epLSREepVFOxIr4c2T9OAWO
+TEL;TYPE=cell:+447761367138
+EMAIL;TYPE=home:kerolasa@iki.fi
+URL;Homepage:https://kerolasa.iki.fi/
+URL;LinkedIn:https://www.linkedin.com/in/kerolasa/
+URL;Github:https://github.com/kerolasa/
+URL;WhatsApp:https://wa.me/kerolasa
+URL;Signal:https://signal.me/#eu/PJRrjHsKqTH2tOrnqPYhJhN8jLdq6jBUplj8bfhSo1xom2ncBcFE6LwY4glAqAoF
+PHOTO;JPEG:https://kerolasa.iki.fi/me_london.jpg
+TZ:Europe/London
 END:VCARD
